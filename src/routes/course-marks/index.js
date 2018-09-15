@@ -9,7 +9,11 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
+<<<<<<< HEAD
 import CourseMarks from './CourseMarks';
+=======
+import AnswerList from './AnswerList';
+>>>>>>> markset
 
 const title = 'Users of Course';
 
@@ -57,12 +61,70 @@ async function action({ fetch, params }) {
       },
     ],
   ];
+<<<<<<< HEAD
 
+=======
+  const stadyEntitys = [
+    {
+      title: 'First Entity',
+      answers: [
+        {
+          title: 'first answer',
+          id: '1',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'second answer',
+          id: '2',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'third answer',
+          id: '3',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+      ],
+    },
+    {
+      title: 'second Entity',
+      answers: [
+        {
+          title: 'first answer',
+          id: '1',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'second answer',
+          id: '2',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'third answer',
+          id: '3',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+      ],
+    },
+  ];
+>>>>>>> markset
   return {
     title,
     component: (
       <Layout menuSecond={mas}>
+<<<<<<< HEAD
         <CourseMarks course={data.courses[0]} />
+=======
+        <AnswerList
+          answers={stadyEntitys[0].answers}
+          stydyEntity={stadyEntitys[0]}
+        />
+>>>>>>> markset
       </Layout>
     ),
   };

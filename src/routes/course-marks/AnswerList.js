@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'react-bootstrap';
 
+<<<<<<< HEAD
 const AnswerList = ({ studyEntity }) => (
   <Table>
     <thead>
@@ -21,10 +22,28 @@ const AnswerList = ({ studyEntity }) => (
       ) : (
         <tr>not mark</tr>
       )}
+=======
+const AnswerList = ({ answers, stydyEntity }) => (
+  <Table>
+    <thead>
+      <tr>
+        <th scope="col">{stydyEntity.title}</th>
+        <th scope="col">Deadline</th>
+        <th scope="col">Mark</th>
+      </tr>
+      {answers.map(ans => (
+        <tr>
+          <td>{ans.title}</td>
+          <td>{ans.deadline}</td>
+          <td>{ans.mark}</td>
+        </tr>
+      ))}
+>>>>>>> markset
     </thead>
   </Table>
 );
 AnswerList.propTypes = {
+<<<<<<< HEAD
   studyEntity: PropTypes.shape({
     id: PropTypes.string,
     title: PropTypes.string,
@@ -38,6 +57,20 @@ AnswerList.propTypes = {
             mark: PropTypes.float,
           }),
         ),
+=======
+  answers: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string,
+      title: PropTypes.string,
+    }),
+  ).isRequired,
+  stydyEntity: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    answers: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        title: PropTypes.string,
+>>>>>>> markset
       }),
     ),
   }).isRequired,
