@@ -10,7 +10,11 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import CourseMarks from './CourseMarks';
+=======
+import AnswerList from './AnswerList';
+>>>>>>> markset
 =======
 import AnswerList from './AnswerList';
 >>>>>>> markset
@@ -62,8 +66,11 @@ async function action({ fetch, params }) {
     ],
   ];
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
+=======
+>>>>>>> markset
   const stadyEntitys = [
     {
       title: 'First Entity',
@@ -112,6 +119,9 @@ async function action({ fetch, params }) {
       ],
     },
   ];
+<<<<<<< HEAD
+>>>>>>> markset
+=======
 >>>>>>> markset
   return {
     title,
@@ -119,18 +129,24 @@ async function action({ fetch, params }) {
       <Layout menuSecond={mas}>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <CourseMarks course={data.courses[0]} />
 =======
+=======
+>>>>>>> markset
         <AnswerList
           answers={stadyEntitys[0].answers}
           stydyEntity={stadyEntitys[0]}
         />
+<<<<<<< HEAD
 >>>>>>> markset
 =======
         {stadyEntitys.map(ent => (
           <AnswerList answers={ent.answers} stydyEntity={ent} />
         ))}
 >>>>>>> add somethings
+=======
+>>>>>>> markset
       </Layout>
     ),
   };

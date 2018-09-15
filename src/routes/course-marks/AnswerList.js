@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Table } from 'react-bootstrap';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const AnswerList = ({ studyEntity }) => (
   <Table>
     <thead>
@@ -23,6 +24,8 @@ const AnswerList = ({ studyEntity }) => (
         <tr>not mark</tr>
       )}
 =======
+=======
+>>>>>>> markset
 const AnswerList = ({ answers, stydyEntity }) => (
   <Table>
     <thead>
@@ -38,11 +41,15 @@ const AnswerList = ({ answers, stydyEntity }) => (
           <td>{ans.mark}</td>
         </tr>
       ))}
+<<<<<<< HEAD
+>>>>>>> markset
+=======
 >>>>>>> markset
     </thead>
   </Table>
 );
 AnswerList.propTypes = {
+<<<<<<< HEAD
 <<<<<<< HEAD
   studyEntity: PropTypes.shape({
     id: PropTypes.string,
@@ -58,6 +65,8 @@ AnswerList.propTypes = {
           }),
         ),
 =======
+=======
+>>>>>>> markset
   answers: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
@@ -70,6 +79,9 @@ AnswerList.propTypes = {
       PropTypes.shape({
         id: PropTypes.string,
         title: PropTypes.string,
+<<<<<<< HEAD
+>>>>>>> markset
+=======
 >>>>>>> markset
       }),
     ),
