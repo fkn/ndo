@@ -9,7 +9,7 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import CourseUsers from './CourseUsers';
+import AnswerList from './AnswerList';
 
 const title = 'Users of Course';
 
@@ -44,11 +44,62 @@ async function action({ fetch, params }) {
       },
     ],
   ];
+  const stadyEntitys = [
+    {
+      title: 'First Entity',
+      answers: [
+        {
+          title: 'first answer',
+          id: '1',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'second answer',
+          id: '2',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'third answer',
+          id: '3',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+      ],
+    },
+    {
+      title: 'second Entity',
+      answers: [
+        {
+          title: 'first answer',
+          id: '1',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'second answer',
+          id: '2',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+        {
+          title: 'third answer',
+          id: '3',
+          deadline: '15 сент',
+          mark: '100%',
+        },
+      ],
+    },
+  ];
   return {
     title,
     component: (
       <Layout menuSecond={mas}>
-        <CourseUsers title={data.courses[0].title} course={data.courses[0]} />
+        <AnswerList
+          answers={stadyEntitys[0].answers}
+          stydyEntity={stadyEntitys[0]}
+        />
       </Layout>
     ),
   };
