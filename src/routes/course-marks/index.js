@@ -118,6 +118,7 @@ async function action({ fetch, params }) {
     component: (
       <Layout menuSecond={mas}>
 <<<<<<< HEAD
+<<<<<<< HEAD
         <CourseMarks course={data.courses[0]} />
 =======
         <AnswerList
@@ -125,6 +126,11 @@ async function action({ fetch, params }) {
           stydyEntity={stadyEntitys[0]}
         />
 >>>>>>> markset
+=======
+        {stadyEntitys.map(ent => (
+          <AnswerList answers={ent.answers} stydyEntity={ent} />
+        ))}
+>>>>>>> add somethings
       </Layout>
     ),
   };
