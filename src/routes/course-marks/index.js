@@ -96,10 +96,9 @@ async function action({ fetch, params }) {
     title,
     component: (
       <Layout menuSecond={mas}>
-        <AnswerList
-          answers={stadyEntitys[0].answers}
-          stydyEntity={stadyEntitys[0]}
-        />
+        {stadyEntitys.map(ent => (
+          <AnswerList answers={ent.answers} stydyEntity={ent} />
+        ))}
       </Layout>
     ),
   };
