@@ -130,6 +130,7 @@ async function action({ fetch, params }) {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         <CourseMarks course={data.courses[0]} />
 =======
 =======
@@ -147,6 +148,11 @@ async function action({ fetch, params }) {
 >>>>>>> add somethings
 =======
 >>>>>>> markset
+=======
+        {stadyEntitys.map(ent => (
+          <AnswerList answers={ent.answers} stydyEntity={ent} />
+        ))}
+>>>>>>> add somethings
       </Layout>
     ),
   };
