@@ -9,15 +9,25 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import AnswerList from './AnswerList';
+import CourseMarks from './CourseMarks';
 
 const title = 'Users of Course';
 
 async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, users{ id, email, role } }
+      query: `query courses($ids: [String],$studyEntityIds:[String]) {
+        courses(ids: $ids) { id, title, studyEntities {
+          id,
+          title
+        } 
+        answers ( studyEntityIds:$studyEntityIds){
+          id,
+          marks {
+            id, mark
+          }
+        }
+      }
       }`,
       variables: {
         ids: params.idCourse,
@@ -44,61 +54,12 @@ async function action({ fetch, params }) {
       },
     ],
   ];
-  const stadyEntitys = [
-    {
-      title: 'First Entity',
-      answers: [
-        {
-          title: 'first answer',
-          id: '1',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'second answer',
-          id: '2',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'third answer',
-          id: '3',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-      ],
-    },
-    {
-      title: 'second Entity',
-      answers: [
-        {
-          title: 'first answer',
-          id: '1',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'second answer',
-          id: '2',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'third answer',
-          id: '3',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-      ],
-    },
-  ];
+
   return {
     title,
     component: (
       <Layout menuSecond={mas}>
-        {stadyEntitys.map(ent => (
-          <AnswerList answers={ent.answers} stydyEntity={ent} />
-        ))}
+        <CourseMarks course={data.courses[0]} />
       </Layout>
     ),
   };

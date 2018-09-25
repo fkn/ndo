@@ -7,13 +7,11 @@ const AnswerList = ({ answers, stydyEntity }) => (
     <thead>
       <tr>
         <th scope="col">{stydyEntity.title}</th>
-        <th scope="col">Deadline</th>
         <th scope="col">Mark</th>
       </tr>
       {answers.map(ans => (
         <tr>
           <td>{ans.title}</td>
-          <td>{ans.deadline}</td>
           <td>{ans.mark}</td>
         </tr>
       ))}
