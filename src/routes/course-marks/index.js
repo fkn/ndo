@@ -11,6 +11,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import CourseMarks from './CourseMarks';
 =======
 import AnswerList from './AnswerList';
@@ -18,12 +19,16 @@ import AnswerList from './AnswerList';
 =======
 import AnswerList from './AnswerList';
 >>>>>>> markset
+=======
+import CourseMarks from './CourseMarks';
+>>>>>>> add MarkList (don't finish)
 
 const title = 'Users of Course';
 
 async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
+<<<<<<< HEAD
       query: `query courses($ids: [String]) {
         courses(ids: $ids) { id, title, 
           studyEntities {
@@ -39,6 +44,20 @@ async function action({ fetch, params }) {
             }
           }
         }
+=======
+      query: `query courses($ids: [String],$studyEntityIds:[String]) {
+        courses(ids: $ids) { id, title, studyEntities {
+          id,
+          title
+        } 
+        answers ( studyEntityIds:$studyEntityIds){
+          id,
+          marks {
+            id, mark
+          }
+        }
+      }
+>>>>>>> add MarkList (don't finish)
       }`,
       variables: {
         ids: params.idCourse,
@@ -65,6 +84,7 @@ async function action({ fetch, params }) {
       },
     ],
   ];
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 
@@ -123,10 +143,14 @@ async function action({ fetch, params }) {
 >>>>>>> markset
 =======
 >>>>>>> markset
+=======
+
+>>>>>>> add MarkList (don't finish)
   return {
     title,
     component: (
       <Layout menuSecond={mas}>
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -153,6 +177,9 @@ async function action({ fetch, params }) {
           <AnswerList answers={ent.answers} stydyEntity={ent} />
         ))}
 >>>>>>> add somethings
+=======
+        <CourseMarks course={data.courses[0]} />
+>>>>>>> add MarkList (don't finish)
       </Layout>
     ),
   };
