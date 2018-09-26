@@ -7,14 +7,20 @@ const AnswerList = ({ studyEntity }) => (
     <thead>
       <tr>
         <th scope="col">{studyEntity.title}</th>
+        <th>Date</th>
         <th scope="col">Mark</th>
       </tr>
-      {studyEntity.answers[0].marks.map(mark => (
-        <tr>
-          <td>{mark.createdAt.substr(0, 10) || 'No'}</td>
-          <td>{mark.mark.toFixed(2) || 'No'}</td>
-        </tr>
-      ))}
+      {studyEntity.answers[0] !== undefined ? (
+        studyEntity.answers[0].marks.map(mark => (
+          <tr>
+            <td>NameAnswer</td>
+            <td>{mark.createdAt.substr(0, 10) || 'No'}</td>
+            <td>{mark.mark.toFixed(2) || 'No'}</td>
+          </tr>
+        ))
+      ) : (
+        <tr>not mark</tr>
+      )}
     </thead>
   </Table>
 );
