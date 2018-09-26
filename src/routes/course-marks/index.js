@@ -9,27 +9,13 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 import CourseMarks from './CourseMarks';
-=======
-import AnswerList from './AnswerList';
->>>>>>> markset
-=======
-import AnswerList from './AnswerList';
->>>>>>> markset
-=======
-import CourseMarks from './CourseMarks';
->>>>>>> add MarkList (don't finish)
 
 const title = 'Users of Course';
 
 async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-<<<<<<< HEAD
-<<<<<<< HEAD
       query: `query courses($ids: [String]) {
         courses(ids: $ids) { id, title, 
           studyEntities {
@@ -45,37 +31,6 @@ async function action({ fetch, params }) {
             }
           }
         }
-=======
-      query: `query courses($ids: [String],$studyEntityIds:[String]) {
-        courses(ids: $ids) { id, title, studyEntities {
-          id,
-          title
-        } 
-        answers ( studyEntityIds:$studyEntityIds){
-          id,
-          marks {
-            id, mark
-          }
-        }
-      }
->>>>>>> add MarkList (don't finish)
-=======
-      query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, 
-          studyEntities {
-          id,
-          title
-          answers{
-            id,
-            marks{
-              id,
-              mark,
-              createdAt,
-              }
-            }
-          }
-        }
->>>>>>> add MarksList
       }`,
       variables: {
         ids: params.idCourse,
@@ -102,102 +57,12 @@ async function action({ fetch, params }) {
       },
     ],
   ];
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 
-=======
-=======
->>>>>>> markset
-  const stadyEntitys = [
-    {
-      title: 'First Entity',
-      answers: [
-        {
-          title: 'first answer',
-          id: '1',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'second answer',
-          id: '2',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'third answer',
-          id: '3',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-      ],
-    },
-    {
-      title: 'second Entity',
-      answers: [
-        {
-          title: 'first answer',
-          id: '1',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'second answer',
-          id: '2',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-        {
-          title: 'third answer',
-          id: '3',
-          deadline: '15 сент',
-          mark: '100%',
-        },
-      ],
-    },
-  ];
-<<<<<<< HEAD
->>>>>>> markset
-=======
->>>>>>> markset
-=======
-
->>>>>>> add MarkList (don't finish)
   return {
     title,
     component: (
       <Layout menuSecond={mas}>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
         <CourseMarks course={data.courses[0]} />
-=======
-=======
->>>>>>> markset
-        <AnswerList
-          answers={stadyEntitys[0].answers}
-          stydyEntity={stadyEntitys[0]}
-        />
-<<<<<<< HEAD
->>>>>>> markset
-=======
-        {stadyEntitys.map(ent => (
-          <AnswerList answers={ent.answers} stydyEntity={ent} />
-        ))}
->>>>>>> add somethings
-=======
->>>>>>> markset
-=======
-        {stadyEntitys.map(ent => (
-          <AnswerList answers={ent.answers} stydyEntity={ent} />
-        ))}
->>>>>>> add somethings
-=======
-        <CourseMarks course={data.courses[0]} />
->>>>>>> add MarkList (don't finish)
       </Layout>
     ),
   };
