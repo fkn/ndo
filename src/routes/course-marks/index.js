@@ -20,7 +20,11 @@ async function action({ fetch, params }) {
         courses(ids: $ids) { id, title, studyEntities {
           id,
           title
+<<<<<<< HEAD
         } 
+=======
+        }
+>>>>>>> upstream/master
         answers ( studyEntityIds:$studyEntityIds){
           id,
           marks {

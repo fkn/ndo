@@ -2,14 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Glyphicon } from 'react-bootstrap';
 
-const AddNewButton = ({ onClick }) => (
+const IconButton = ({ onClick, glyph }) => (
   <Button onClick={onClick}>
-    <Glyphicon glyph="glyphicon glyphicon-plus" />
+    <Glyphicon glyph={`glyphicon glyphicon-${glyph}`} />
   </Button>
 );
 
-AddNewButton.propTypes = {
+IconButton.propTypes = {
   onClick: PropTypes.func.isRequired,
+  glyph: PropTypes.string.isRequired,
 };
 
-export default AddNewButton;
+export default IconButton;

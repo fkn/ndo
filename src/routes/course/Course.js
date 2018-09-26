@@ -13,49 +13,42 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import ModalEditor from '../../components/ModalEditor';
-import AddNewButton from '../../components/AddNewButton';
 import StudyEntitiesList from '../../components/StudyEntitiesList';
 import UsersList from '../../components/UsersList';
 import s from './Course.css';
 import { addStudyEntity } from '../../actions/study-entities';
 import { addUserToCourse, deleteUserFromCourse } from '../../actions/courses';
 import ModalWithUsers from '../../components/ModalWithUsers/ModalWithUsers';
+import IconButton from '../../components/IconButton/IconButton';
 
 class Course extends React.Component {
   static propTypes = {
-    title: PropTypes.string.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string,
       email: PropTypes.string,
       role: PropTypes.string,
     }),
+    addUserToCourse: PropTypes.func.isRequired,
+    addStudyEntity: PropTypes.func.isRequired,
+    deleteUserFromCourse: PropTypes.func.isRequired,
     studyEntities: PropTypes.arrayOf(
       PropTypes.shape({
         id: PropTypes.string,
         title: PropTypes.string,
       }),
     ).isRequired,
-    course: PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      studyEntities: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string,
-          title: PropTypes.string,
-        }),
-      ),
-      users: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string,
-          email: PropTypes.string,
-          role: PropTypes.string,
-        }),
-      ),
-    }).isRequired,
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    users: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        email: PropTypes.string,
+        role: PropTypes.string,
+      }),
+    ).isRequired,
   };
 
   static contextTypes = {
-    store: PropTypes.any.isRequired,
     fetch: PropTypes.func.isRequired,
   };
 
@@ -79,13 +72,11 @@ class Course extends React.Component {
     this.handleChangeBody = this.handleChangeBody.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.addStudyEntity = this.addStudyEntity.bind(this);
-    this.closeModalStudyEntity = this.closeModalStudyEntity.bind(this);
-    this.closeModalSubscribe = this.closeModalSubscribe.bind(this);
   }
 
   componentWillMount() {
     this.setState({
-      subscribedUsersList: this.props.course.users,
+      subscribedUsersList: this.props.users,
     });
   }
 
@@ -113,16 +104,12 @@ class Course extends React.Component {
     this.setState({ studyEntityBody: val });
   }
 
-  closeModalStudyEntity() {
+  closeModalStudyEntity = () => {
     this.setState({ showModalEditor: false });
-  }
-
-  closeModalSubscribe() {
-    this.setState({ showModalSubscribe: false });
-  }
+  };
 
   async addUserToCourse(user, role) {
-    const { course } = this.props;
+    const { id } = this.props;
     const userRole = {
       id: user.id,
       email: user.email,
@@ -141,12 +128,12 @@ class Course extends React.Component {
         }`,
         variables: {
           id: user.id,
-          courseId: course.id,
+          courseId: id,
           role: role || 'student',
         },
       }),
     });
-    this.context.store.dispatch(addUserToCourse(course.id, user.id));
+    this.props.addUserToCourse(id, user.id);
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
     });
@@ -165,14 +152,12 @@ class Course extends React.Component {
         }`,
         variables: {
           id: user.id,
-          courseId: this.props.course.id,
+          courseId: this.props.id,
         },
       }),
     });
     const { data } = await resp.json();
-    this.context.store.dispatch(
-      deleteUserFromCourse(data.deleteUserFromCourse),
-    );
+    this.props.deleteUserFromCourse(data.deleteUserFromCourse);
 
     this.setState({
       subscribedUsersList: this.state.subscribedUsersList,
@@ -180,6 +165,8 @@ class Course extends React.Component {
   }
 
   async addStudyEntity() {
+    const { id } = this.props;
+    const { studyEntityName, studyEntityBody } = this.state;
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation create($courseId: String, $title: String, $body: String){ 
@@ -190,13 +177,13 @@ class Course extends React.Component {
           { id, title }
         }`,
         variables: {
-          title: this.state.studyEntityName,
-          courseId: this.props.course.id,
-          body: this.state.studyEntityBody,
+          title: studyEntityName,
+          courseId: id,
+          body: studyEntityBody,
         },
       }),
     });
-    this.context.store.dispatch(addStudyEntity(this.props.title));
+    this.props.addStudyEntity(id, studyEntityName);
     this.closeModalStudyEntity();
   }
   render() {
@@ -226,21 +213,22 @@ class Course extends React.Component {
       />
     );
 
-    const { user, studyEntities, course } = this.props;
+    const { user, studyEntities, title, id } = this.props;
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            {course.title}
-            {user ? (
-              <AddNewButton
+            {title}
+            {user && (
+              <IconButton
                 onClick={() => {
                   this.setState({ showModalEditor: true });
                 }}
+                glyph="plus"
               />
-            ) : null}
+            )}
           </h1>
-          <StudyEntitiesList studyEntities={studyEntities} course={course} />
+          <StudyEntitiesList studyEntities={studyEntities} courseId={id} />
           <ModalEditor
             title="Study entity"
             show={this.state.showModalEditor}
@@ -261,11 +249,9 @@ class Course extends React.Component {
           </Button>
           <ModalWithUsers
             show={this.state.showModalSubscribe}
-            titleLeft="Subscribed"
             usersLeft={subscribedUsersList}
-            titleRight="Unsubscribed"
             usersRight={usersList}
-            handleClose={this.closeModalSubscribe}
+            handleClose={() => this.setState({ showModalSubscribe: false })}
           />
         </div>
       </div>
@@ -278,4 +264,7 @@ const mapStateToProps = state => ({
   user: state.user,
 });
 
-export default connect(mapStateToProps)(withStyles(s)(Course));
+export default connect(
+  mapStateToProps,
+  { addUserToCourse, deleteUserFromCourse, addStudyEntity },
+)(withStyles(s)(Course));
