@@ -13,7 +13,6 @@ import {
 } from 'graphql';
 
 import me from './queries/me';
-import news from './queries/news';
 import {
   createUser,
   removeUser,
@@ -37,12 +36,7 @@ import {
   addUserToCourse,
   deleteUserFromCourse,
 } from './queries/course';
-import {
-  createStudyEntity,
-  removeStudyEntity,
-  studyEntities,
-  updateStudyEntity,
-} from './queries/study-entity';
+import { createUnit, removeUnit, units, updateUnit } from './queries/unit';
 import {
   addAnswer,
   answers,
@@ -56,11 +50,10 @@ const schema = new Schema({
     name: 'Query',
     fields: {
       me,
-      news,
       users,
       files,
       courses,
-      studyEntities,
+      units,
       answers,
       marks,
       groups,
@@ -71,10 +64,10 @@ const schema = new Schema({
     fields: {
       createCourse,
       removeCourse,
-      createStudyEntity,
-      removeStudyEntity,
+      createUnit,
+      removeUnit,
       updateCourses,
-      updateStudyEntity,
+      updateUnit,
       createUser,
       removeUser,
       updateUser,

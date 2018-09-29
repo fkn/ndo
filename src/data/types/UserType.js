@@ -15,6 +15,8 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLList,
 } from 'graphql';
+import _ from 'lodash';
+import AnswerType from './AnswerType';
 import CourseType from './CourseType';
 import UserLoginType from './UserLoginType';
 import UserProfileType from './UserProfileType';
@@ -22,7 +24,7 @@ import UserClaimType from './UserClaimType';
 
 const UserType = new ObjectType({
   name: 'UserType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(ID) },
     email: { type: StringType },
     isAdmin: { type: Boolean },
@@ -42,7 +44,15 @@ const UserType = new ObjectType({
       type: new NonNull(UserProfileType),
       resolve: user => user.getProfile(),
     },
-  },
+    role: {
+      type: StringType,
+      resolve: user => _.get(user, 'UserCourse.role'),
+    },
+    answers: {
+      type: new GraphQLList(AnswerType),
+      resolve: user => user.getAnswers(),
+    },
+  }),
 });
 
 export default UserType;

@@ -34,9 +34,8 @@ const routes = {
         import(/* webpackChunkName: 'courseMarks' */ './course-marks'),
     },
     {
-      path: '/courses/:idCourse/:idStudyEntity',
-      load: () =>
-        import(/* webpackChunkName: 'studyEntity' */ './study-entity'),
+      path: '/courses/:idCourse/:idUnit',
+      load: () => import(/* webpackChunkName: 'unit' */ './unit'),
     },
     {
       path: '/users',
@@ -69,6 +68,10 @@ const routes = {
     {
       path: '/files',
       load: () => import(/* webpackChunkName: 'files' */ './files'),
+    },
+    {
+      path: '/tests',
+      load: () => import(/* webpackChunkName: 'tests' */ './tests'),
     },
     // Wildcard routes, e.g. { path: '(.*)', ... } (must go last)
     {

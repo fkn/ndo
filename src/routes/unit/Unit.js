@@ -9,33 +9,38 @@
 
 import React from 'react';
 import {
-  Button,
-  Glyphicon,
-  DropdownButton,
-  MenuItem,
   Form,
   FormControl,
-  ControlLabel,
   FormGroup,
-  Col,
-  Table,
+  Button,
+  DropdownButton,
+  MenuItem,
 } from 'react-bootstrap';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import * as moment from 'moment';
+import { connect } from 'react-redux';
 import TextEditor from '../../components/TextEditor';
-import StudyEntityView from '../../components/StudyEntityView';
-import { setStudyEntityHeaders } from '../../actions/study-entity';
-import s from './StudyEntity.css';
+import MarksTable from '../../components/MarksTable';
+import UnitView from '../../components/UnitView';
+import { setUnitHeaders } from '../../actions/unit';
+import s from './Unit.css';
+import IconButton from '../../components/IconButton/IconButton';
 
-class StudyEntity extends React.Component {
+class Unit extends React.Component {
   static propTypes = {
     course: PropTypes.shape({
       id: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
     }).isRequired,
-    studyEntity: PropTypes.shape({
+    role: PropTypes.string.isRequired,
+    setUnitHeaders: PropTypes.func.isRequired,
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+    }),
+    unit: PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
       body: PropTypes.string,
@@ -43,21 +48,26 @@ class StudyEntity extends React.Component {
   };
 
   static contextTypes = {
-    store: PropTypes.any.isRequired,
     fetch: PropTypes.func.isRequired,
+  };
+
+  static defaultProps = {
+    user: PropTypes.shape({
+      id: PropTypes.string,
+      email: PropTypes.string,
+    }),
   };
 
   constructor(props) {
     super(props);
     this.state = {
       editMode: false,
-      title: this.props.studyEntity.title,
-      body: this.props.studyEntity.body,
+      title: this.props.unit.title,
+      body: this.props.unit.body,
       answerId: null,
       mark: 0,
       comment: '',
       answer: {},
-      role: '',
     };
     this.switchMode = this.switchMode.bind(this);
     this.changeTitle = this.changeTitle.bind(this);
@@ -73,11 +83,10 @@ class StudyEntity extends React.Component {
     this.updateHeaders = this.updateHeaders.bind(this);
   }
 
-  async componentWillMount() {
-    if (this.context.store.getState().user) {
+  async componentDidMount() {
+    const { user } = this.props;
+    if (user) {
       this.retrieveAnswer();
-      const role = await this.getUserRole();
-      this.setState({ role });
     }
   }
 
@@ -85,29 +94,6 @@ class StudyEntity extends React.Component {
     const { mark } = this.state;
     if (mark <= 100 && mark >= 0) return 'success';
     return 'error';
-  }
-
-  async getUserRole() {
-    const resp = await this.context.fetch('/graphql', {
-      body: JSON.stringify({
-        query: `query getUserRole(
-          $courseIds: [String],
-          $userId: [String]
-        ){
-          courses(ids: $courseIds){
-            users(ids: $userId) {
-              role,
-            }
-          }  
-        }`,
-        variables: {
-          courseIds: [this.props.course.id],
-          userId: [this.context.store.getState().user.id],
-        },
-      }),
-    });
-    const { data } = await resp.json();
-    return _.get(data, 'courses[0].users[0].role');
   }
 
   changeTitle(event) {
@@ -131,6 +117,7 @@ class StudyEntity extends React.Component {
   }
 
   async uploadFile(key, file) {
+    const { user } = this.props;
     const formData = new FormData();
     formData.append(
       'query',
@@ -141,7 +128,7 @@ class StudyEntity extends React.Component {
     formData.append(
       'variables',
       JSON.stringify({
-        userId: this.context.store.getState().user.id,
+        userId: user.id,
         internalName: file.name,
       }),
     );
@@ -170,8 +157,9 @@ class StudyEntity extends React.Component {
   }
 
   async saveAnswer() {
+    const { user, course, unit } = this.props;
+    const answer = await this.postProcessAnswer(this.state.answer);
     if (this.state.answerId) {
-      const answer = await this.postProcessAnswer(this.state.answer);
       await this.context.fetch('/graphql', {
         body: JSON.stringify({
           query: `mutation update(
@@ -183,7 +171,7 @@ class StudyEntity extends React.Component {
               id: $id
             ){
               id
-            }            
+            }
           }`,
           variables: {
             body: JSON.stringify(answer),
@@ -198,22 +186,22 @@ class StudyEntity extends React.Component {
             $body: String,
             $courseId: String,
             $userId: String,
-            $studyEntityId: String
+            $unitId: String
           ){
             addAnswer(
               body: $body,
               courseId: $courseId,
               userId: $userId,
-              studyEntityId: $studyEntityId
+              unitId: $unitId
             ){
               id
-            }            
+            }
           }`,
           variables: {
-            body: JSON.stringify(this.state.answer),
-            courseId: this.props.course.id,
-            userId: this.context.store.getState().user.id,
-            studyEntityId: this.props.studyEntity.id,
+            body: JSON.stringify(answer),
+            courseId: course.id,
+            userId: user.id,
+            unitId: unit.id,
           },
         }),
       });
@@ -228,17 +216,17 @@ class StudyEntity extends React.Component {
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation create($title: String, $id: String, $body: String) {
-          updateStudyEntity(
+          updateUnit(
             title: $title,
             id: $id,
             body: $body,
           ){
-            id,title  
-          }            
+            id,title
+          }
         }`,
         variables: {
           title: this.state.title,
-          id: this.props.studyEntity.id,
+          id: this.props.unit.id,
           body: this.state.body,
         },
       }),
@@ -250,12 +238,14 @@ class StudyEntity extends React.Component {
     // TODO: change cancel bahaviour when user save values once
     this.setState({
       editMode: false,
-      title: this.props.studyEntity.title,
-      body: this.props.studyEntity.body,
+      title: this.props.unit.title,
+      body: this.props.unit.body,
     });
   }
 
   async addMark() {
+    const { user } = this.props;
+    const { mark, comment, answerId } = this.state;
     await this.context.fetch('/graphql', {
       body: JSON.stringify({
         query: `mutation addMark($mark: Float, $comment: String, $answerId: String, $authorId: String) {
@@ -263,16 +253,16 @@ class StudyEntity extends React.Component {
             mark: $mark,
             comment: $comment,
             answerId: $answerId,
-            authorId: $authorId,            
+            authorId: $authorId,
           ) {
             id
-          }     
+          }
         }`,
         variables: {
-          mark: this.state.mark,
-          comment: this.state.comment,
-          answerId: this.state.answerId,
-          authorId: this.context.store.getState().user.id,
+          mark,
+          comment,
+          answerId,
+          authorId: user.id,
         },
       }),
     });
@@ -283,49 +273,48 @@ class StudyEntity extends React.Component {
   }
 
   async retrieveAnswer() {
+    const { user, course, unit } = this.props;
     const resp = await this.context.fetch('/graphql', {
       body: JSON.stringify({
-        query: `query retrieveAnswers (
-          $userIds: [String]
-          $studyEntityIds: [String]
-          $courseIds: [String]
-        ){
-          answers(
-            userIds: $userIds,
-            studyEntityIds: $studyEntityIds,
-            courseIds: $courseIds
-          ){
-            id, body, marks {
-              id, mark, comment, createdAt
-            },
-            user { 
-              id, profile {
-                displayName
+        query: `query retireve(
+          $courseIds: [String],
+          $unitIds: [String],
+          $userIds: [String])
+        {
+          courses (ids:$courseIds) {
+            units (ids:$unitIds) {
+              answers (userIds: $userIds) {
+                id,
+                body
+                marks { id, mark, comment, createdAt }
+                user {
+                  id,
+                  profile { displayName }
+                }
+                createdAt
               }
-            },
-            createdAt
-          }            
+            }
+          }
         }`,
         variables: {
-          userIds: !this.context.store.getState().user.isAdmin
-            ? [this.context.store.getState().user.id]
-            : null,
-          studyEntityIds: [this.props.studyEntity.id],
-          courseIds: [this.props.course.id],
+          userIds: (!user.isAdmin && [user.id]) || null,
+          unitIds: [unit.id],
+          courseIds: [course.id],
         },
       }),
     });
     const { data } = await resp.json();
-    if (data && data.answers && data.answers.length) {
+    const answers = _.get(data, 'courses[0].units[0].answers');
+    if (answers && answers.length) {
       const answerCur = 0;
       this.setState({
-        answers: data.answers.map(answer => {
+        answers: answers.map(answer => {
           const ans = answer;
           ans.body = JSON.parse(answer.body);
           return ans;
         }),
-        answerId: data.answers[answerCur].id,
-        answer: data.answers[answerCur].body,
+        answerId: answers[answerCur].id,
+        answer: answers[answerCur].body,
         answerCur,
       });
     }
@@ -341,10 +330,12 @@ class StudyEntity extends React.Component {
   }
 
   updateHeaders(headers) {
-    this.context.store.dispatch(setStudyEntityHeaders(headers));
+    this.props.setUnitHeaders(headers);
   }
 
   render() {
+    const { user, role } = this.props;
+
     let bodyComponent;
     let headerComponent;
     if (this.state.editMode) {
@@ -358,43 +349,32 @@ class StudyEntity extends React.Component {
             type="text"
             onChange={this.changeTitle}
           />
-          <Button onClick={this.save}>
-            <Glyphicon glyph="ok" />
-          </Button>
-          <Button onClick={this.cancel}>
-            <Glyphicon glyph="remove" />
-          </Button>
+          <IconButton onClick={this.save} glyph="ok" />
+          <IconButton onClick={this.cancel} glyph="remove" />
         </span>
       );
     } else {
       bodyComponent = (
         <span>
-          <StudyEntityView
+          <UnitView
             answerId={this.state.answerId}
             value={this.state.answer}
             body={this.state.body}
             onChange={this.changeAnswer}
             onHeadersChange={this.updateHeaders}
           />
-          {this.context.store.getState().user ? (
-            <Button onClick={this.saveAnswer}>Save</Button>
-          ) : (
-            undefined
-          )}
+          {user && <Button onClick={this.saveAnswer}>Save</Button>}
         </span>
       );
       headerComponent = (
         <span>
           {this.state.title}
-          {this.state.role === 'teacher' ? (
-            <Button onClick={this.switchMode}>
-              <Glyphicon glyph="pencil" />
-            </Button>
-          ) : null}
+          {role === 'teacher' && (
+            <IconButton onClick={this.switchMode} glyph="pencil" />
+          )}
         </span>
       );
     }
-    const { user } = this.context.store.getState();
     let answerChooser;
     let markView;
     if (user && user.isAdmin && this.state.answers) {
@@ -425,61 +405,54 @@ class StudyEntity extends React.Component {
             <td>{mark.mark}</td>
             <td>{mark.comment}</td>
             <td>
-              {moment(mark.createdAt).fromNow()} ({moment(
-                mark.createdAt,
-              ).format('llll')})
+              {moment(mark.createdAt).fromNow()} (
+              {moment(mark.createdAt).format('llll')})
             </td>
           </tr>
         ),
       );
       markView = (
         <div>
-          <h3>Marks list</h3>
-          <Table striped bordered condensed hover>
-            <thead>
+          <MarksTable marks={marks}>
+            {() => (
               <tr>
-                <th>N</th>
-                <th>Mark</th>
-                <th>Comment</th>
-                <th>Date</th>
+                <td />
+                <td>
+                  <Form inline>
+                    <FormGroup
+                      controlId="Mark"
+                      validationState={this.getValidationState()}
+                    >
+                      <FormControl
+                        type="number"
+                        placeholder="Mark"
+                        value={this.state.mark}
+                        onChange={this.changeMark}
+                      />
+                    </FormGroup>
+                  </Form>
+                </td>
+                <td>
+                  <Form inline>
+                    <FormGroup controlId="Comment">
+                      <FormControl
+                        type="text"
+                        placeholder="Comment"
+                        value={this.state.comment}
+                        onChange={this.changeComment}
+                      />
+                    </FormGroup>
+                  </Form>
+                </td>
+                <td>
+                  {this.getValidationState() === 'success' && (
+                    <IconButton onClick={this.addMark} glyph="ok" />
+                  )}
+                </td>
               </tr>
-            </thead>
-            <tbody>{marks}</tbody>
-          </Table>
+            )}
+          </MarksTable>
           {/* Form for setting marks and making a comment */}
-          <Form horizontal>
-            <FormGroup controlId="Comment">
-              <Col sm={10}>
-                <FormControl
-                  type="text"
-                  placeholder="Comment"
-                  value={this.state.comment}
-                  onChange={this.changeComment}
-                />
-              </Col>
-            </FormGroup>
-            <ControlLabel>Set mark</ControlLabel>
-            <FormGroup
-              controlId="Mark"
-              validationState={this.getValidationState()}
-            >
-              <Col sm={2}>
-                <FormControl
-                  type="number"
-                  placeholder="Mark"
-                  value={this.state.mark}
-                  onChange={this.changeMark}
-                />
-              </Col>
-              <Col sm={2}>
-                {this.getValidationState() === 'success' ? (
-                  <Button onClick={this.addMark}>
-                    <Glyphicon glyph="ok" />
-                  </Button>
-                ) : null}
-              </Col>
-            </FormGroup>
-          </Form>
         </div>
       );
     }
@@ -490,7 +463,8 @@ class StudyEntity extends React.Component {
           <h1>
             <a href={`/courses/${this.props.course.id}`}>
               {this.props.course.title}
-            </a>/{headerComponent}
+            </a>
+            /{headerComponent}
             {answerChooser}
           </h1>
           {bodyComponent}
@@ -501,4 +475,11 @@ class StudyEntity extends React.Component {
   }
 }
 
-export default withStyles(s)(StudyEntity);
+const mapStateToProps = state => ({
+  user: state.user,
+});
+
+export default connect(
+  mapStateToProps,
+  { setUnitHeaders },
+)(withStyles(s)(Unit));

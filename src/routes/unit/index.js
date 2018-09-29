@@ -9,33 +9,35 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import StudyEntity from './StudyEntity';
+import Unit from './Unit';
 
-const title = 'Study Entity';
+const title = 'Unit';
 
-async function action({ fetch, params }) {
+async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
-      query: `query courses($idCourse: [String], $idStudyEntity: [String]) {
-        courses(ids: $idCourse) { id, title },
-        studyEntities(ids: $idStudyEntity) { id, title, body } 
+      query: `query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) {
+        courses(ids: $idCourse) { id, title, users(ids: $idUser) { role } },
+        units(ids: $idUnit) { id, title, body }
       }`,
       variables: {
         idCourse: params.idCourse,
-        idStudyEntity: params.idStudyEntity,
+        idUnit: params.idUnit,
+        idUser: store.getState().user.id,
       },
     }),
   });
   const { data } = await resp.json();
-  if (!data && !data.courses.length && !data.studyEntities.length)
-    throw new Error('Failed to load course.');
+  if (!data && !data.courses.length && !data.units.length)
+    throw new Error('Failed to load unit.');
   return {
     title,
     component: (
-      <Layout showStudyEntityHeaders>
-        <StudyEntity
+      <Layout showUnitHeaders>
+        <Unit
           course={data.courses[0]}
-          studyEntity={data.studyEntities[0]}
+          unit={data.units[0]}
+          role={data.courses[0].users[0].role}
         />
       </Layout>
     ),

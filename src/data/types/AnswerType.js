@@ -6,10 +6,12 @@ import {
 } from 'graphql';
 import MarkType from './MarkType';
 import UserType from './UserType';
+import UnitType from './UnitType';
+import CourseType from './CourseType';
 
 const AnswerType = new ObjectType({
   name: 'AnswerType',
-  fields: {
+  fields: () => ({
     id: { type: new NonNull(StringType) },
     body: { type: new NonNull(StringType) },
     marks: {
@@ -24,7 +26,15 @@ const AnswerType = new ObjectType({
       type: StringType,
       resolve: answer => answer.createdAt.toISOString(),
     },
-  },
+    unit: {
+      type: UnitType,
+      resolve: answer => answer.getUnit(),
+    },
+    course: {
+      type: CourseType,
+      resolve: answer => answer.getCourse(),
+    },
+  }),
 });
 
 export default AnswerType;

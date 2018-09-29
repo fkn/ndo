@@ -10,15 +10,13 @@
 import React from 'react';
 import Layout from '../../components/Layout';
 import Course from './Course';
-import { setStudyEntities } from '../../actions/study-entities';
-
-const title = 'Course';
+import { setUnits } from '../../actions/units';
 
 async function action({ fetch, params, store }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, studyEntities{ id,title }, users{ id,email,role } }
+        courses(ids: $ids) { id, title, units { id,title }, users{ id,email,role } }
       }`,
       variables: {
         ids: params.idCourse,
@@ -27,21 +25,22 @@ async function action({ fetch, params, store }) {
   });
   const { data } = await resp.json();
   if (!data && !data.courses) throw new Error('Failed to load course.');
-  store.dispatch(setStudyEntities(data.courses[0].studyEntities));
+  const course = data.courses[0];
+  store.dispatch(setUnits(course.units));
   const mas = [
     [
       {
-        title: 'Study entities',
-        action: `/courses/${data.courses[0].id}`,
+        title: 'Units',
+        action: `/courses/${course.id}`,
         isActive: true,
       },
       {
         title: 'Users list',
-        action: `/courses/${data.courses[0].id}/users`,
+        action: `/courses/${course.id}/users`,
       },
       {
         title: 'Marks list',
-        action: `/courses/${data.courses[0].id}/marks`,
+        action: `/courses/${course.id}/marks`,
       },
     ],
     [
@@ -52,10 +51,10 @@ async function action({ fetch, params, store }) {
     ],
   ];
   return {
-    title,
+    title: course.title,
     component: (
       <Layout menuSecond={mas}>
-        <Course course={data.courses[0]} />
+        <Course {...course} />
       </Layout>
     ),
   };

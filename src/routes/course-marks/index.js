@@ -9,7 +9,7 @@
 
 import React from 'react';
 import Layout from '../../components/Layout';
-import CourseUsers from './CourseUsers';
+import CourseMarks from './CourseMarks';
 
 const title = 'Users of Course';
 
@@ -17,7 +17,20 @@ async function action({ fetch, params }) {
   const resp = await fetch('/graphql', {
     body: JSON.stringify({
       query: `query courses($ids: [String]) {
-        courses(ids: $ids) { id, title, users{ id, email, role } }
+        courses(ids: $ids) { id, title,
+          units {
+          id,
+          title
+          answers{
+            id,
+            marks{
+              id,
+              mark,
+              createdAt,
+              }
+            }
+          }
+        }
       }`,
       variables: {
         ids: params.idCourse,
@@ -30,7 +43,7 @@ async function action({ fetch, params }) {
   const mas = [
     [
       {
-        title: 'Study entities',
+        title: 'Units',
         action: `/courses/${data.courses[0].id}`,
       },
       {
@@ -44,11 +57,12 @@ async function action({ fetch, params }) {
       },
     ],
   ];
+
   return {
     title,
     component: (
       <Layout menuSecond={mas}>
-        <CourseUsers title={data.courses[0].title} course={data.courses[0]} />
+        <CourseMarks course={data.courses[0]} />
       </Layout>
     ),
   };

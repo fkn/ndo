@@ -1,7 +1,7 @@
 import DataType from 'sequelize';
 import Model from '../sequelize';
 
-const StudyEntity = Model.define('StudyEntity', {
+const Unit = Model.define('Unit', {
   id: {
     type: DataType.UUID,
     defaultValue: DataType.UUIDV1,
@@ -15,6 +15,10 @@ const StudyEntity = Model.define('StudyEntity', {
   body: {
     type: DataType.STRING,
   },
+
+  schema: {
+    type: DataType.STRING,
+  },
 });
 
-export default StudyEntity;
+export default Unit;
