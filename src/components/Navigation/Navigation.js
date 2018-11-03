@@ -1,85 +1,96 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import s from './Navigation.css';
-import history from '../../history';
+import { connect } from 'react-redux';
+import Link from '../Link';
 
-function isLeftClickEvent(event) {
-  return event.button === 0;
+function logout(event) {
+  event.preventDefault();
+  fetch('/logout', { method: 'POST' }).then(
+    () => (window.location.href = 'login'),
+  );
 }
 
-function isModifiedEvent(event) {
-  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
-}
+function Navigation({ user }) {
+  return (
+    <Navbar inverse fixedTop defaultExpanded fluid>
+      <Navbar.Header>
+        <Navbar.Brand>
+          <Link to="/">NDO</Link>
+        </Navbar.Brand>
+        <Navbar.Toggle />
+      </Navbar.Header>
+      <Navbar.Collapse>
+        <Nav>
+          <NavItem
+            componentClass={Link}
+            eventKey={1}
+            to="/courses"
+            href="/courses"
+          >
+            Courses
+          </NavItem>
+          <NavItem componentClass={Link} eventKey={2} to="/users" href="/users">
+            Users
+          </NavItem>
+          <NavItem componentClass={Link} eventKey={3} to="/files" href="/files">
+            Files
+          </NavItem>
+          <NavItem componentClass={Link} eventKey={4} to="/tests" href="/tests">
+            Tests
+          </NavItem>
+        </Nav>
+        {user ? (
+          <Nav pullRight>
+            <NavItem
+              componentClass={Link}
+              eventKey={1}
+              to={`/users/${user.id}`}
+              href={`/users/${user.id}`}
+            >
+              {user.email}
+            </NavItem>
 
-class Navigation extends React.Component {
-  static contextTypes = { store: PropTypes.any.isRequired };
-
-  render() {
-    function processClick(a, event) {
-      if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
-        return;
-      }
-      event.preventDefault();
-      history.push(event.target.getAttribute('href'));
-    }
-
-    function logout(event) {
-      window.location.href = '/logout';
-      event.preventDefault();
-    }
-
-    const { user } = this.context.store.getState();
-
-    return (
-      <Navbar
-        inverse
-        collapseOnSelect
-        fixedTop
-        defaultExpanded
-        fluid
-        onSelect={processClick}
-      >
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href="/">NDO</a>
-          </Navbar.Brand>
-          <Navbar.Toggle />
-        </Navbar.Header>
-        <Navbar.Collapse>
-          <Nav>
-            <NavItem href="/courses">Courses</NavItem>
-            <NavItem href="/users">Users</NavItem>
-            <NavItem href="/files">Files</NavItem>
-            <NavItem href="/tests">Tests</NavItem>
+            <NavItem eventKey={2} onClick={logout}>
+              Log out
+            </NavItem>
           </Nav>
-          {user ? (
-            <Nav pullRight>
-              <NavItem href={`/users/${user.id}`}>{user.email}</NavItem>
-              <NavItem href="/logout" onSelect={logout}>
-                Log out
-              </NavItem>
-            </Nav>
-          ) : (
-            <Nav pullRight>
-              <NavItem href="/login">Log in</NavItem>
-              <NavItem href="/register">Sign up</NavItem>
-            </Nav>
-          )}
-        </Navbar.Collapse>
-      </Navbar>
-    );
-  }
+        ) : (
+          <Nav pullRight>
+            <NavItem
+              componentClass={Link}
+              eventKey={1}
+              to="/login"
+              href="/login"
+            >
+              Log in
+            </NavItem>
+            <NavItem
+              componentClass={Link}
+              eventKey={2}
+              to="/register"
+              href="/register"
+            >
+              Sign up
+            </NavItem>
+          </Nav>
+        )}
+      </Navbar.Collapse>
+    </Navbar>
+  );
 }
 
-export default withStyles(s)(Navigation);
+Navigation.propTypes = {
+  user: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    email: PropTypes.string.isRequired,
+  }),
+};
+
+Navigation.defaultProps = {
+  user: null,
+};
+
+export default connect(state => ({
+  user: state.user,
+}))(Navigation);

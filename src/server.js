@@ -34,9 +34,8 @@ import schema from './data/schema';
 // import assets from './asset-manifest.json'; // eslint-disable-line import/no-unresolved
 import chunks from './chunk-manifest.json'; // eslint-disable-line import/no-unresolved
 import configureStore from './store/configureStore';
-import { setRuntimeVariable } from './actions/runtime';
 import config from './config';
-import models, { User, File } from './data/models';
+import models, { File } from './data/models';
 import sequelize from './data/sequelize';
 
 const SequelizeStore = require('connect-session-sequelize')(
@@ -124,27 +123,21 @@ app.use(passport.session());
 if (__DEV__) {
   app.enable('trust proxy');
 }
-app.post('/register', (req, res) => {
-  User.createUser({
-    email: req.body.email,
-    key: req.body.password,
-    name: req.body.name,
-    gender: req.body.gender,
-  }).then(user => {
-    req.login(user, err => {
-      if (!err) res.redirect('/');
-    });
-  });
-});
-
+app.post(
+  '/register',
+  passport.authenticate('local-signup', {
+    successRedirect: '/',
+    failureRedirect: '/register',
+  }),
+);
 app.post(
   '/login',
-  passport.authenticate('local', {
+  passport.authenticate('local-login', {
     successRedirect: '/',
     failureRedirect: '/login',
   }),
 );
-app.get('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
   req.logout();
   res.redirect('/');
 });
@@ -226,14 +219,6 @@ app.get('*', async (req, res, next) => {
       fetch,
       // I should not use `history` on server.. but how I do redirection? follow universal-router
     });
-
-    store.dispatch(
-      setRuntimeVariable({
-        name: 'initialNow',
-        value: Date.now(),
-      }),
-    );
-
     // Global (context) variables that can be easily accessed from any React component
     // https://facebook.github.io/react/docs/context.html
     const context = {

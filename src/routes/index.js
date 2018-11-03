@@ -1,13 +1,7 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 /* eslint-disable global-require */
+
+import { setSecondMenu } from '../actions/menu';
+import { getCourseSecondMenu } from './menu';
 
 // The top-level (parent) route
 const routes = {
@@ -21,21 +15,33 @@ const routes = {
     },
     {
       path: '/courses/:idCourse',
-      load: () => import(/* webpackChunkName: 'course' */ './course'),
-    },
-    {
-      path: '/courses/:idCourse/users',
-      load: () =>
-        import(/* webpackChunkName: 'courseUsers' */ './course-users'),
-    },
-    {
-      path: '/courses/:idCourse/marks',
-      load: () =>
-        import(/* webpackChunkName: 'courseMarks' */ './course-marks'),
-    },
-    {
-      path: '/courses/:idCourse/:idUnit',
-      load: () => import(/* webpackChunkName: 'unit' */ './unit'),
+      async action({ next, store }) {
+        const child = await next();
+        store.dispatch(
+          setSecondMenu('course', getCourseSecondMenu(store.getState().course)),
+        );
+        return child;
+      },
+      children: [
+        {
+          path: '',
+          load: () => import(/* webpackChunkName: 'course' */ './course'),
+        },
+        {
+          path: '/users',
+          load: () =>
+            import(/* webpackChunkName: 'courseUsers' */ './course-users'),
+        },
+        {
+          path: '/marks',
+          load: () =>
+            import(/* webpackChunkName: 'courseMarks' */ './course-marks'),
+        },
+        {
+          path: '/:idUnit',
+          load: () => import(/* webpackChunkName: 'unit' */ './unit'),
+        },
+      ],
     },
     {
       path: '/users',
@@ -72,9 +78,13 @@ const routes = {
     },
   ],
 
-  async action({ next }) {
+  async action({ next, store, pathname }) {
     // Execute each child route until one of them return the result
     const route = await next();
+
+    if (!pathname.startsWith('/courses/')) {
+      store.dispatch(setSecondMenu('course', []));
+    }
 
     // Provide default values for title, description etc.
     route.title = `${route.title || 'Untitled Page'} - NDO`;

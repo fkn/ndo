@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, DropdownButton, MenuItem } from 'react-bootstrap';
@@ -15,7 +6,8 @@ import { connect } from 'react-redux';
 import MarksTable from '../../components/MarksTable';
 import ModalEditor from '../../components/ModalEditor';
 import UnitView from '../../components/UnitView';
-import { setUnitHeaders, updateUnit, createMark } from '../../actions/units';
+import { updateUnit, createMark } from '../../actions/units';
+import { setSecondMenu } from '../../actions/menu';
 
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
@@ -64,6 +56,11 @@ class Unit extends React.Component {
     if (user) {
       await this.retrieveAnswer();
     }
+  }
+
+  componentWillUnmount() {
+    const { dispatch } = this.props;
+    dispatch(setSecondMenu('unit', []));
   }
 
   handleChange = name => ({ target: { value } }) =>
@@ -242,7 +239,7 @@ class Unit extends React.Component {
                 answers.map((ans, i) => (
                   <MenuItem key={ans.id} eventKey={i} active={i === answerCur}>
                     {`
-                    ${ans.user.profile.displayName} 
+                    ${ans.user.profile.displayName}
                     ${ans.createdAt}`}
                   </MenuItem>
                 ))}
@@ -253,7 +250,11 @@ class Unit extends React.Component {
             value={answer}
             body={unit.body}
             onChange={val => this.setState({ answer: val })}
-            onHeadersChange={headers => dispatch(setUnitHeaders(headers))}
+            onHeadersChange={headers =>
+              dispatch(
+                setSecondMenu('unit', headers.filter(item => item.level === 2)),
+              )
+            }
           />
           {user && <Button onClick={this.saveAnswer}>Save</Button>}
           {unit.answers[0] ? (

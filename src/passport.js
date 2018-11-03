@@ -1,18 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
-/**
- * Passport.js reference implementation.
- * The database schema used in this sample is available at
- * https://github.com/membership/membership.db/tree/master/postgres
- */
-
 import passport from 'passport';
 import bcrypt from 'bcrypt-nodejs';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
@@ -128,6 +113,7 @@ passport.use(
 );
 
 passport.use(
+  'local-login',
   new LocalStrategy(
     {
       usernameField: 'usernameOrEmail',
@@ -156,9 +142,49 @@ passport.use(
           },
         ],
       });
-      if (bcrypt.compareSync(password, users[0].claims[0].value))
-        return done(null, users[0]);
-      return done(null, false);
+      if (!users[0]) {
+        return done(null, false);
+      }
+      if (!bcrypt.compareSync(password, users[0].claims[0].value))
+        return done(null, false);
+      return done(null, users[0]);
+    },
+  ),
+);
+
+passport.use(
+  'local-signup',
+  new LocalStrategy(
+    {
+      usernameField: 'email',
+      passwordField: 'password',
+      passReqToCallback: true,
+    },
+    async (req, email, password, done) => {
+      try {
+        // check to see if theres already a user with that email
+        const user = await User.findOne({
+          where: { email },
+        });
+        if (user) {
+          return done(null, false);
+        }
+      } catch (err) {
+        console.error(err);
+        return done(err);
+      }
+      // try {
+      const newUser = await User.createUser({
+        email,
+        key: password,
+        name: req.body.name,
+        gender: req.body.gender,
+      });
+      return done(null, newUser);
+      // } catch (error) {
+      //   console.error(error);
+      //   return done(error);
+      // }
     },
   ),
 );
@@ -169,7 +195,11 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser((id, done) => {
   User.findById(id).then(user => {
-    done(null, user);
+    if (user) {
+      done(null, user.get());
+    } else {
+      done(user.errors, null);
+    }
   });
 });
 
