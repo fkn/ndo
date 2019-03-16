@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
 import Link from '../Link';
 
@@ -8,14 +9,15 @@ const User = ({ user, link, hideTags }) => {
   if (user && user.isAdmin) tags.push('admin');
   if (user && user.role) tags.push(user.role);
   const tagsView = (tags.length && <b>[{tags.join(', ')}]</b>) || null;
+  const name = _.get(user, 'profile.displayName') || _.get(user, 'email') || '';
   return user && link ? (
     <span>
-      <Link to={`/users/${user.id}`}>{user.email}</Link>
+      <Link to={`/users/${user.id}`}>{name}</Link>
       {!hideTags && tagsView}
     </span>
   ) : (
     <span>
-      {(user && user.email) || ''}
+      {name}
       {!hideTags && tagsView}
     </span>
   );

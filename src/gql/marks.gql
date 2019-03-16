@@ -7,6 +7,9 @@ query marks($ids: [String], $userIds: [String]) {
       email
       isAdmin
       role
+      profile {
+        displayName
+      }
     }
     units {
       id
