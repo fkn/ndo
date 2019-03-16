@@ -2,9 +2,8 @@ import mailgun from 'mailgun-js';
 import config from './config';
 
 const mailUtil = mailgun(config.emailSendConfig);
-const sendEmail = (to, message, attachment) =>
+const sendEmail = ({ to, text, html, subject, attachment }) =>
   new Promise((resolve, reject) => {
-    const { text, html, subject } = message;
     const data = {
       from: 'NDO team <info@ndoproject.com>',
       to,

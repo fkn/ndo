@@ -182,7 +182,9 @@ passport.use(
       });
       await sendEmail.sendEmail({
         to: email,
-        message: { subject: 'qwerty', text: 'haha', html: null },
+        subject: 'qwerty',
+        text: 'haha',
+        html: null,
         attachment: null,
       });
       return done(null, newUser);

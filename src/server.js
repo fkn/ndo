@@ -113,13 +113,13 @@ app.use(passport.session());
 if (__DEV__) {
   app.enable('trust proxy');
 }
-app.post(
-  '/register',
-  passport.authenticate('local-signup', {
-    successRedirect: '/',
-    failureRedirect: '/register',
-  }),
-);
+// app.post(
+//   '/register',
+//   passport.authenticate('local-signup', {
+//     successRedirect: '/',
+//     failureRedirect: '/register',
+//   }),
+// );
 app.post(
   '/login',
   passport.authenticate('local-login', {
