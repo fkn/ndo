@@ -4,7 +4,7 @@ import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { User, UserLogin, UserClaim, UserProfile } from './data/models';
 import config from './config';
-
+import sendEmail from './utils';
 /**
  * Sign in with Facebook.
  */
@@ -179,6 +179,13 @@ passport.use(
         key: password,
         name: req.body.name,
         gender: req.body.gender,
+      });
+      await sendEmail.sendEmail({
+        to: email,
+        subject: 'qwerty',
+        text: 'haha',
+        html: null,
+        attachment: null,
       });
       return done(null, newUser);
       // } catch (error) {
