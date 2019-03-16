@@ -73,4 +73,9 @@ module.exports = {
         'KTZ6cxoKnEakQCeSpZlaUCJWGAlTEBJj0y2EMkUBujA7zWSvaQ',
     },
   },
+  // mailgun
+  emailSendConfig: {
+    apiKey: process.env.MAILGUN_KEY,
+    domain: process.env.MAILGUN_DOMAIN || 'mailg.ndoproject.org',
+  },
 };

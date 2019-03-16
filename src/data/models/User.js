@@ -36,7 +36,11 @@ const User = Model.define(
           'Oops. Looks like you already have an account with this email address. Please try to login.',
       },
     },
-
+    emailConfirm: {
+      type: DataType.STRING,
+      defaultValue: false,
+      allowNull: false,
+    },
     emailConfirmed: {
       type: DataType.BOOLEAN,
       defaultValue: false,
