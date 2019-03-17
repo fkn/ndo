@@ -23,7 +23,7 @@ const Course = Model.define('course', {
     allowNull: false,
   },
 
-  depsBody: {
+  schema: {
     type: DataType.TEXT,
   },
 });
