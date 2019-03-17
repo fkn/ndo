@@ -2,6 +2,7 @@ query loadCourse($id: [String]) {
   courses(ids: $id) {
     id
     title
+    schema
     units {
       id
       title

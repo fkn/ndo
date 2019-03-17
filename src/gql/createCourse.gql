@@ -1,7 +1,8 @@
-mutation createCourse($title: String!) {
-  createCourse(title: $title) {
+mutation createCourse($title: String!, $schema: String) {
+  createCourse(title: $title, schema: $schema) {
     id
     title
+    schema
     users {
       id
     }

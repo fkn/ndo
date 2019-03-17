@@ -6,9 +6,12 @@ import {
   ControlLabel,
   FormGroup,
   HelpBlock,
+  Tabs,
+  Tab,
 } from 'react-bootstrap';
 import { updateCourse, createCourse } from '../../actions/courses';
 import Modal from '../../components/Modal';
+import TextEditor from '../../components/TextEditor';
 
 class ModalCourseEdit extends React.Component {
   static propTypes = {
@@ -29,27 +32,46 @@ class ModalCourseEdit extends React.Component {
 
   render() {
     const { course, edit } = this.props;
-    const { title = course.title } = this.state;
+    const {
+      title = course.title,
+      tab = 'course',
+      schema = course.schema || '',
+    } = this.state;
     return (
       <Modal
         modalId={this.props.modalId}
         defaultFooter={edit ? 'save_close' : 'add_close'}
         onSubmit={() =>
-          this.props.dispatch(edit ? updateCourse(title) : createCourse(title))
+          this.props.dispatch(
+            edit
+              ? updateCourse({ title, schema })
+              : createCourse({ title, schema }),
+          )
         }
       >
         <Modal.Body>
-          <FormGroup controlId="title">
-            <ControlLabel>Title</ControlLabel>
-            <FormControl
-              autoFocus
-              type="text"
-              name="title"
-              value={title}
-              onChange={this.handleChange}
-            />
-            <HelpBlock>Title can not be empty</HelpBlock>
-          </FormGroup>
+          <Tabs activeKey={tab} onSelect={key => this.setState({ tab: key })}>
+            <Tab eventKey="course" title="Course">
+              <FormGroup controlId="title">
+                <ControlLabel>Title</ControlLabel>
+                <FormControl
+                  autoFocus
+                  type="text"
+                  name="title"
+                  value={title}
+                  onChange={this.handleChange}
+                />
+                <HelpBlock>Title can not be empty</HelpBlock>
+              </FormGroup>
+            </Tab>
+            <Tab eventKey="schema" title="Schema">
+              <TextEditor
+                mode="json"
+                value={schema}
+                onChange={value => this.setState({ schema: value })}
+              />
+            </Tab>
+          </Tabs>
         </Modal.Body>
       </Modal>
     );

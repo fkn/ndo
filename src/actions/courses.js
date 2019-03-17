@@ -76,17 +76,21 @@ export function fetchCourses(id) {
   };
 }
 
-export function createCourse(title) {
+export function createCourse({ title, schema }) {
   return async (dispatch, _, { graphqlRequest }) => {
-    const { data } = await graphqlRequest(createCourseGql, { title });
+    const { data } = await graphqlRequest(createCourseGql, { title, schema });
     return dispatch(addCourse(data.createCourse));
   };
 }
 
-export function updateCourse(title) {
+export function updateCourse({ title, schema }) {
   return async (dispatch, getState, { graphqlRequest }) => {
     const { id } = getState().course;
-    const { data } = await graphqlRequest(updateCourseGql, { title, id });
+    const { data } = await graphqlRequest(updateCourseGql, {
+      title,
+      schema,
+      id,
+    });
     return dispatch(renameCourse(data.updateCourse));
   };
 }

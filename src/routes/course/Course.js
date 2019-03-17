@@ -57,6 +57,7 @@ Course.propTypes = {
     ),
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
+    schema: PropTypes.string,
   }).isRequired,
 };
 
