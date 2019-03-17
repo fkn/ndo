@@ -5,6 +5,7 @@ import {
   GraphQLList as List,
   GraphQLNonNull as NonNull,
 } from 'graphql';
+import _ from 'lodash';
 import CourseType from '../types/CourseType';
 import UserType from '../types/UserType';
 import UserCourseRoleType from '../types/UserCourseRoleType';
@@ -17,6 +18,10 @@ const createCourse = {
     title: {
       description: 'The title of the new course',
       type: new NonNull(StringType),
+    },
+    schema: {
+      description: 'The schema of the new course (JSON)',
+      type: StringType,
     },
   },
   resolve({ request }, args) {
@@ -107,11 +112,16 @@ const updateCourse = {
       description: 'The title of the course',
       type: StringType,
     },
+    schema: {
+      description: 'The schema of course (JSON)',
+      type: StringType,
+    },
   },
   async resolve({ request }, args) {
     const course = await Course.findById(args.id);
     if (!(await course.canWrite(request.user))) throw new NoAccessError();
-    return course.update({ title: args.title });
+    const updateFields = _.pick(args, ['title', 'schema']);
+    return course.update(updateFields);
   },
 };
 

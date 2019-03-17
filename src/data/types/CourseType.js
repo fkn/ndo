@@ -15,6 +15,7 @@ const CourseType = new ObjectType({
   fields: () => ({
     id: { type: new NonNull(StringType) },
     title: { type: new NonNull(StringType) },
+    schema: { type: StringType },
     units: {
       args: {
         ids: {
