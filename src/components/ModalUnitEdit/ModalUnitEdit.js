@@ -76,7 +76,7 @@ class ModalUnitEdit extends React.Component {
     const {
       title = unit.title,
       body = unit.body,
-      schema = unit.schema,
+      schema = unit.schema || '',
       tab = 'unit',
     } = this.state;
     return (
