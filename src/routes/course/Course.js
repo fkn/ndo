@@ -11,7 +11,7 @@ import ModalUnitEdit from '../../components/ModalUnitEdit';
 import { getRole } from '../../util/course';
 
 function Course({ user, course, dispatch }) {
-  const { units, id, title } = course;
+  const { units, id, title, schema } = course;
   const role = getRole(course, user);
   return (
     <div className={s.root}>
@@ -35,7 +35,7 @@ function Course({ user, course, dispatch }) {
             )}
           </Fragment>
         </h1>
-        <UnitsList units={units} courseId={id} role={role} />
+        <UnitsList units={units} courseId={id} role={role} schema={schema} />
       </div>
     </div>
   );
