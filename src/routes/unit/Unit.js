@@ -284,11 +284,7 @@ class Unit extends React.Component {
             </Button>
           )}
           {saveStatus && <Alert variant={saveStatus}>{saveMassage}</Alert>}
-          {unit.answers[0] ? (
-            <MarksTable />
-          ) : (
-            <p>This unit has no answers yet</p>
-          )}
+          {answer ? <MarksTable /> : <p>This unit has no answers yet</p>}
         </div>
       </div>
     );
