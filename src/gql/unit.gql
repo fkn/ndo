@@ -2,6 +2,15 @@ query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) {
   courses(ids: $idCourse) {
     id
     title
+    users {
+      id
+      role
+      profile {
+        displayName
+      }
+    }
+  }
+  courseRole: courses(ids: $idCourse) {
     users(ids: $idUser) {
       role
     }

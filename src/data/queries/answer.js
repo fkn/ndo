@@ -101,13 +101,18 @@ const createAnswer = {
       description: 'id of the unit',
       type: new NonNull(StringType),
     },
+    // TODO: need to verify that only teacher or root can change userId
+    userId: {
+      description: 'id of user to create',
+      type: StringType,
+    },
   },
   resolve: ({ request }, args) =>
     Model.transaction(async t => {
       const answer = await Answer.create(
         {
           ...args,
-          userId: request.user.id,
+          userId: args.userId || request.user.id,
         },
         { transaction: t },
       );

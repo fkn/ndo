@@ -32,7 +32,7 @@ async function action({ fetch, store }, { idCourse, idUnit }) {
       <Layout>
         <Unit
           course={data.courses[0]}
-          role={data.courses[0].users[0].role || 'teacher'}
+          role={data.courseRole[0].users[0].role || 'teacher'}
         />
       </Layout>
     ),

@@ -1,5 +1,5 @@
-mutation add($body: String!, $courseId: String!, $unitId: String!) {
-  createAnswer(body: $body, courseId: $courseId, unitId: $unitId) {
+mutation add($body: String!, $courseId: String!, $unitId: String!, $userId: String) {
+  createAnswer(body: $body, courseId: $courseId, unitId: $unitId, userId: $userId) {
     id,
     body
   }

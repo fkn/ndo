@@ -177,6 +177,16 @@ class Unit extends React.Component {
     }
   };
 
+  addEmptyAnswer = async () => {
+    const { course, unit } = this.props;
+    const { userCur } = this.state;
+    await this.sendAnswer(
+      createAnswer,
+      { body: {}, data: [['upload_order', '[]']] },
+      { courseId: course.id, unitId: unit.id, userId: userCur },
+    );
+  };
+
   async retrieveAnswer() {
     const { user, course, unit } = this.props;
     const resp = await this.context.fetch('/graphql', {
@@ -213,7 +223,11 @@ class Unit extends React.Component {
       saveMassage,
     } = this.state;
     const ua = Unit.getAnswersByUser(answers, userCur);
-    const answerUser = ua.users.find(u => u.id === userCur);
+    const uids = ua.users.map(u => u.id);
+    const users = ua.users.concat(
+      course.users.filter(u => !uids.includes(u.id)),
+    );
+    const answerUser = users.find(u => u.id === userCur);
     const answer = answers.find(ans => ans.id === answerCur);
     return (
       <div className={s.root}>
@@ -237,7 +251,7 @@ class Unit extends React.Component {
                   }
                   onSelect={this.handleUserSelect}
                 >
-                  {ua.users.map(u => (
+                  {users.map(u => (
                     <MenuItem
                       key={u.id}
                       eventKey={u.id}
@@ -284,7 +298,19 @@ class Unit extends React.Component {
             </Button>
           )}
           {saveStatus && <Alert variant={saveStatus}>{saveMassage}</Alert>}
-          {answer ? <MarksTable /> : <p>This unit has no answers yet</p>}
+          {answer ? (
+            <MarksTable />
+          ) : (
+            <p>
+              This unit has no answers yet
+              {role === 'teacher' &&
+                answerUser && (
+                  <Button size="sm" onClick={this.addEmptyAnswer}>
+                    Add empty answer
+                  </Button>
+                )}
+            </p>
+          )}
         </div>
       </div>
     );
