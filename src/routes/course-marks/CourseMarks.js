@@ -101,7 +101,9 @@ class UserMarks extends React.Component {
             <tbody>
               {this.renderer.rows().map((val, i) => (
                 <tr key={val.id}>
-                  <th>{this.renderer.renderRowHeader(val, i)}</th>
+                  <th className={s.rowHeader}>
+                    {this.renderer.renderRowHeader(val, i)}
+                  </th>
                   {this.renderer
                     .cols()
                     .map((val2, j) => this.renderer.renderCell(i, j))}

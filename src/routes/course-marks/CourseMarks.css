@@ -43,3 +43,19 @@
 .noneEvents {
   pointer-events: none;
 }
+
+.rowHeader {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
+.rowHeader:hover {
+  overflow-x: visible;
+  text-overflow: unset;
+}
+
+.rowHeader:hover a {
+  background-color: white;
+}
