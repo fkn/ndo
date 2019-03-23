@@ -6,6 +6,7 @@ import { Table } from 'react-bootstrap';
 import s from './CourseMarks.css';
 import { UnitPropType } from './AnswerList';
 import User from '../../components/User/User';
+import Link from '../../components/Link/Link';
 
 class TableRenderer {
   constructor() {
@@ -13,10 +14,11 @@ class TableRenderer {
     this.data2 = [];
     this.dataCell = new Map();
   }
-  setData(data1, data2, dataCell) {
+  setData(data1, data2, dataCell, courseId) {
     this.data1 = data1;
     this.data2 = data2;
     this.dataCell = dataCell;
+    this.courseId = courseId;
   }
   cols() {
     return this.data1;
@@ -28,7 +30,8 @@ class TableRenderer {
     return <User key={this.data1[i].id} user={this.data1[i]} hideTags />;
   }
   renderRowHeader(val, i) {
-    return <span key={this.data2[i].id}>{this.data2[i].title}</span>;
+    const { id, title } = this.data2[i];
+    return <Link to={`/courses/${this.courseId}/${id}`}>{title}</Link>;
   }
   // eslint-disable-next-line class-methods-use-this
   renderCell(i, j) {
@@ -80,8 +83,8 @@ class UserMarks extends React.Component {
   }
 
   render() {
-    const { units, users, title } = this.props.course;
-    this.renderer.setData(users, units, TableRenderer.buildCells(units));
+    const { units, users, title, id } = this.props.course;
+    this.renderer.setData(users, units, TableRenderer.buildCells(units), id);
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -89,7 +92,7 @@ class UserMarks extends React.Component {
           <Table>
             <thead>
               <tr>
-                <th />
+                <th className={s.noneEvents} />
                 {this.renderer.cols().map((val, i) => (
                   <th key={val.id}>{this.renderer.renderColHeader(val, i)}</th>
                 ))}

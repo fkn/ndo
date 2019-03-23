@@ -39,3 +39,7 @@
 .noAnswer {
   background-color: #ddd;
 }
+
+.noneEvents {
+  pointer-events: none;
+}
