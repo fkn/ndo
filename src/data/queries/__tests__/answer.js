@@ -117,11 +117,11 @@ describe('update answers', () => {
   };
 
   test('update answer by owner', () =>
-    t({userId: u1.id, isAdmin: false, body: 'test1', expBody: 'test1'}));
+    t({userId: u1.id, isAdmin: false, body: '{"test":1}', expBody: '{"test":1}'}));
   test('update answer by not owner', () =>
-    t({userId: u2.id, isAdmin: false, body: 'test2', error: new NoAccessError()}));
+    t({userId: u2.id, isAdmin: false, body: '{"test":2}', error: new NoAccessError()}));
   test('update answer by not owner[isAdmin]', () =>
-    t({userId: u2.id, isAdmin: true, body: 'test3', expBody: 'test3'}));
+    t({userId: u2.id, isAdmin: true, body: '{"test":3}', expBody: '{"test":3}'}));
   test('update answer by not owner[teacher]', () =>
-    t({userId: u2.id, isAdmin: false, role: 'teacher', body: 'test4', error: new NoAccessError()}));
+    t({userId: u2.id, isAdmin: false, role: 'teacher', body: '{"test":4}', error: new NoAccessError()}));
 });

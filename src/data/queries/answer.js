@@ -37,6 +37,7 @@ const answers = {
 };
 
 async function uploadFiles(request, answer, body, t) {
+  if (!_.get(request, 'body.upload_order')) return body;
   const uploads = JSON.parse(request.body.upload_order);
   for (let i = 0; i < uploads.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -116,7 +117,12 @@ const createAnswer = {
         },
         { transaction: t },
       );
-      const body = await uploadFiles(request, answer, JSON.parse(args.body), t);
+      const body = await uploadFiles(
+        request,
+        answer,
+        JSON.parse(args.body || '{}'),
+        t,
+      );
       return answer.update({ body: JSON.stringify(body) }, { transaction: t });
     }),
 };
