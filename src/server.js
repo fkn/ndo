@@ -20,6 +20,7 @@ import { graphql } from 'graphql';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import nodeFetch from 'node-fetch';
+import mimeTypes from 'mime-types';
 import React from 'react';
 import ReactDOM from 'react-dom/server';
 import PrettyError from 'pretty-error';
@@ -174,7 +175,7 @@ app.get('/api/get_file/:id', async (req, res) => {
     const url = new URL(file.url);
     const stat = fs.statSync(url);
     res.writeHead(200, {
-      'Content-Type': 'text/plain',
+      'Content-Type': mimeTypes.lookup(file.internalName) || 'text/plain',
       'Content-Length': stat.size,
     });
     fs.createReadStream(url).pipe(res);
