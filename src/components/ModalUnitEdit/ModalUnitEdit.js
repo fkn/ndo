@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import {
   FormControl,
+  Checkbox,
   ControlLabel,
   FormGroup,
   HelpBlock,
@@ -78,6 +79,7 @@ class ModalUnitEdit extends React.Component {
       body = unit.body,
       schema = unit.schema || '',
       tab = 'unit',
+      answerable = unit.answerable,
     } = this.state;
     return (
       <Modal
@@ -86,8 +88,8 @@ class ModalUnitEdit extends React.Component {
         onSubmit={() =>
           dispatch(
             edit
-              ? updateUnit({ title, body, schema, id: unit.id })
-              : addUnit({ title, body, schema }),
+              ? updateUnit({ title, body, schema, id: unit.id, answerable })
+              : addUnit({ title, body, schema, answerable }),
           )
         }
       >
@@ -104,6 +106,16 @@ class ModalUnitEdit extends React.Component {
                   onChange={this.handleChange}
                 />
                 <HelpBlock>Title can not be empty</HelpBlock>
+              </FormGroup>
+              <FormGroup controlId="answerable">
+                <Checkbox
+                  checked={answerable}
+                  onChange={ev =>
+                    this.setState({ answerable: ev.target.checked })
+                  }
+                >
+                  Student can add answer for this unit
+                </Checkbox>
               </FormGroup>
               <FormGroup controlId="editor">
                 <TextEditor
