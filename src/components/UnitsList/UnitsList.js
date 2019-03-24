@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import Link from '../Link/Link';
+import s from './UnitsList.css';
 
 // ugly temp solution
 function sortBySchema(units, schema) {
@@ -11,7 +13,7 @@ function sortBySchema(units, schema) {
     return units;
   }
   const { deps = [] } = schema;
-  const res = [];
+  let res = [];
   deps.forEach(dinfo => {
     const unitFrom = units.find(u => u.id === dinfo.from);
     const unitTo = units.find(u => u.id === dinfo.to);
@@ -21,13 +23,19 @@ function sortBySchema(units, schema) {
     if (indexFrom >= 0 && indexTo >= 0) return 0;
     return res.splice(Math.max(indexFrom, indexTo), 1, unitFrom, unitTo);
   });
+  const resIds = res.map(u => u.id);
+  res = res.concat(
+    units
+      .filter(u => !resIds.includes(u.id))
+      .map(u => ({ ...u, nonSchema: true })),
+  );
   return res;
 }
 
 const UnitsList = ({ courseId, units, role, schema }) => (
   <ol>
-    {sortBySchema(units, schema).map(({ id, title }) => (
-      <li key={id}>
+    {sortBySchema(units, schema).map(({ id, title, nonSchema }) => (
+      <li key={id} className={nonSchema && s.nonSchema}>
         {['student', 'teacher'].includes(role) ? (
           <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
         ) : (
@@ -54,4 +62,4 @@ UnitsList.defaultProps = {
   schema: '',
 };
 
-export default UnitsList;
+export default withStyles(s)(UnitsList);
