@@ -21,6 +21,11 @@ const Unit = Model.define('unit', {
   schema: {
     type: DataType.TEXT,
   },
+
+  answerable: {
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+  },
 });
 
 Unit.prototype.canRead = async function canRead(user) {

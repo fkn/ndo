@@ -1,6 +1,7 @@
 import {
   GraphQLObjectType as ObjectType,
   GraphQLString as StringType,
+  GraphQLBoolean as BooleanType,
   GraphQLNonNull as NonNull,
   GraphQLList,
   GraphQLFloat as FloatType,
@@ -39,6 +40,7 @@ const UnitType = new ObjectType({
       type: new GraphQLList(CourseType),
       resolve: unit => unit.getCourses(),
     },
+    answerable: { type: BooleanType },
     weight: {
       type: new NonNull(FloatType),
       resolve: unit => unit.CourseUnit && unit.CourseUnit.weight,

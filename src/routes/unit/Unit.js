@@ -242,44 +242,45 @@ class Unit extends React.Component {
                 glyph="pencil"
               />
             )}
-            {(role === 'teacher' || user.isAdmin) && (
-              <React.Fragment>
-                <DropdownButton
-                  id="user_chooser"
-                  title={
-                    (answerUser && answerUser.profile.displayName) || 'User'
-                  }
-                  onSelect={this.handleUserSelect}
-                >
-                  {users.map(u => (
-                    <MenuItem
-                      key={u.id}
-                      eventKey={u.id}
-                      active={u.id === userCur}
-                      className={u.needMark && s['need-mark']}
-                    >
-                      {u.profile.displayName}
-                    </MenuItem>
-                  ))}
-                </DropdownButton>
-                <DropdownButton
-                  id="answer_chooser"
-                  title={(answer && answer.createdAt) || 'Answer'}
-                  onSelect={this.handleAnswerSelect}
-                >
-                  {ua.answers.map(ans => (
-                    <MenuItem
-                      key={ans.id}
-                      eventKey={ans.id}
-                      active={ans.id === answerCur}
-                      className={ans.needMark && s['need-mark']}
-                    >
-                      {ans.createdAt}
-                    </MenuItem>
-                  ))}
-                </DropdownButton>
-              </React.Fragment>
-            )}
+            {(role === 'teacher' || user.isAdmin) &&
+              unit.answerable && (
+                <React.Fragment>
+                  <DropdownButton
+                    id="user_chooser"
+                    title={
+                      (answerUser && answerUser.profile.displayName) || 'User'
+                    }
+                    onSelect={this.handleUserSelect}
+                  >
+                    {users.map(u => (
+                      <MenuItem
+                        key={u.id}
+                        eventKey={u.id}
+                        active={u.id === userCur}
+                        className={u.needMark && s['need-mark']}
+                      >
+                        {u.profile.displayName}
+                      </MenuItem>
+                    ))}
+                  </DropdownButton>
+                  <DropdownButton
+                    id="answer_chooser"
+                    title={(answer && answer.createdAt) || 'Answer'}
+                    onSelect={this.handleAnswerSelect}
+                  >
+                    {ua.answers.map(ans => (
+                      <MenuItem
+                        key={ans.id}
+                        eventKey={ans.id}
+                        active={ans.id === answerCur}
+                        className={ans.needMark && s['need-mark']}
+                      >
+                        {ans.createdAt}
+                      </MenuItem>
+                    ))}
+                  </DropdownButton>
+                </React.Fragment>
+              )}
           </h1>
           <UnitView
             answerId={this.props.answer.id}
@@ -292,25 +293,28 @@ class Unit extends React.Component {
               )
             }
           />
-          {user && (
-            <Button onClick={this.saveAnswer} disabled={this.state.isSaving}>
-              Save
-            </Button>
-          )}
-          {saveStatus && <Alert variant={saveStatus}>{saveMassage}</Alert>}
-          {answer ? (
-            <MarksTable />
-          ) : (
-            <p>
-              This unit has no answers yet
-              {role === 'teacher' &&
-                answerUser && (
-                  <Button size="sm" onClick={this.addEmptyAnswer}>
-                    Add empty answer
-                  </Button>
-                )}
-            </p>
-          )}
+          {unit.answerable &&
+            user && (
+              <Button onClick={this.saveAnswer} disabled={this.state.isSaving}>
+                Save
+              </Button>
+            )}
+          {unit.answerable &&
+            saveStatus && <Alert variant={saveStatus}>{saveMassage}</Alert>}
+          {unit.answerable &&
+            (answer ? (
+              <MarksTable />
+            ) : (
+              <p>
+                This unit has no answers yet
+                {role === 'teacher' &&
+                  answerUser && (
+                    <Button size="sm" onClick={this.addEmptyAnswer}>
+                      Add empty answer
+                    </Button>
+                  )}
+              </p>
+            ))}
         </div>
       </div>
     );

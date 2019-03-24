@@ -1,5 +1,6 @@
 import {
   GraphQLString as StringType,
+  GraphQLBoolean as BooleanType,
   GraphQLList as List,
   GraphQLNonNull as NonNull,
 } from 'graphql';
@@ -25,15 +26,19 @@ const createUnit = {
       description: 'schema of an answer',
       type: StringType,
     },
+    answerable: {
+      description: 'marks if asnswer can be added to the unit',
+      type: BooleanType,
+    },
   },
-  async resolve({ request }, { title, body, schema, courseId }) {
+  async resolve({ request }, { title, body, schema, courseId, answerable }) {
     try {
       if (!request.user) throw new Error('User is not logged in');
       const role = await request.user.getRole(courseId);
       if (!request.user.isAdmin && (!role || role !== 'teacher'))
         throw new Error("User doesn't have rights to edit this course");
       const course = await Course.findById(courseId);
-      return Unit.create({ title, body, schema })
+      return Unit.create({ title, body, schema, answerable })
         .then(u => {
           u.setCourses([course]);
           return u;
@@ -101,6 +106,10 @@ const updateUnit = {
     schema: {
       description: 'schema of an answer',
       type: StringType,
+    },
+    answerable: {
+      description: 'marks if asnswer can be added to the unit',
+      type: BooleanType,
     },
   },
   resolve(parent, { id, ...rest }) {

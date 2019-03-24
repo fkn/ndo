@@ -1,8 +1,9 @@
-mutation createUnit($id: String!, $title: String!, $body: String, $schema: String) {
-  createUnit(title: $title, courseId: $id, body: $body, schema: $schema) {
+mutation createUnit($id: String!, $title: String!, $body: String, $schema: String, $answerable: Boolean) {
+  createUnit(title: $title, courseId: $id, body: $body, schema: $schema, answerable: $answerable) {
     id
     title
     body
     schema
+    answerable
   }
 }
