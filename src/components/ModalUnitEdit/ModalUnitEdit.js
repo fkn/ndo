@@ -62,11 +62,12 @@ class ModalUnitEdit extends React.Component {
         body: formData,
       });
       const { data } = await resp.json();
-      if (this.editor)
+      if (this.editor) {
         this.editor.session.insert(
           this.editor.getCursorPosition(),
           `/api/get_file/${data.uploadFile.id}`,
         );
+      }
     } catch (error) {
       console.error(error);
     }
@@ -136,7 +137,6 @@ class ModalUnitEdit extends React.Component {
                   mode="json"
                   value={schema}
                   onChange={value => this.setState({ schema: value })}
-                  onLoad={editor => (this.editor = editor)}
                 />
               </FormGroup>
             </Tab>
