@@ -9,12 +9,12 @@ export function getCourseSecondMenu(course) {
     },
     {
       id: `${course.id}/users`,
-      title: 'Users list',
+      title: 'Users',
       link: `/courses/${course.id}/users`,
     },
     {
       id: `${course.id}/marks`,
-      title: 'Marks list',
+      title: 'Marks',
       link: `/courses/${course.id}/marks`,
     },
   ];
