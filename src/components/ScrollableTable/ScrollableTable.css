@@ -1,0 +1,31 @@
+.tableScroller {
+  overflow-x: scroll;
+}
+
+.ltCorner {
+  pointer-events: none;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: white;
+  transform: none !important;
+}
+
+.rowHeader {
+  max-width: 250px;
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  position: sticky;
+  left: 0;
+  background-color: white;
+}
+
+.rowHeader:hover {
+  overflow-x: visible;
+  text-overflow: unset;
+}
+
+.rowHeader:hover a {
+  background-color: white;
+}
