@@ -8,6 +8,26 @@ import { UnitPropType } from './AnswerList';
 import User from '../../components/User/User';
 import Link from '../../components/Link/Link';
 
+function getLatestMark(answers) {
+  function getMark(marks) {
+    if (!marks || !marks.length) return undefined;
+    return marks.reduce((mark, m) => {
+      if (new Date(m.createdAt) - new Date(mark.createdAt) > 0) return m;
+      return mark;
+    });
+  }
+  if (!answers || !answers.length) return undefined;
+  return (answers || [])
+    .map(a => ({ answer: a, mark: getMark(a.marks) }))
+    .reduce((res, am) => {
+      if (!am.mark) return res;
+      if (!res.mark) return am;
+      if (new Date(am.mark.createdAt) - new Date(res.mark.createdAt) > 0)
+        return am;
+      return res;
+    });
+}
+
 class TableRenderer {
   constructor() {
     this.data1 = [];
@@ -48,12 +68,10 @@ class TableRenderer {
     const id = this.transpose
       ? `${this.cols()[j].id} ${this.rows()[i].id}`
       : `${this.rows()[i].id} ${this.cols()[j].id}`;
-    const data = this.dataCell.get(id);
+    const { mark, answer } = getLatestMark(this.dataCell.get(id)) || {};
     const tags = [s.mark];
-    if (!(data && data.length)) tags.push(s.noAnswer);
-    const amark = data && data.find(d => d.marks && d.marks.length);
-    if (!amark) tags.push(s.noMark);
-    const mark = amark && amark.marks[amark.marks.length - 1];
+    if (!answer) tags.push(s.noAnswer);
+    if (!mark) tags.push(s.noMark);
     return (
       <td key={id} className={tags.join(' ')}>
         {mark && Math.floor(mark.mark)}
