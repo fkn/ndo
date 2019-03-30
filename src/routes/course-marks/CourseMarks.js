@@ -28,12 +28,12 @@ class TableRenderer {
     return <Link to={`/courses/${this.courseId}/${id}`}>{title}</Link>;
   }
   cols() {
-    if (this.transpose) return this.data2;
-    return this.data1;
+    const data = this.transpose ? this.data2 : this.data1;
+    return data;
   }
   rows() {
-    if (this.transpose) return this.data1;
-    return this.data2;
+    const data = this.transpose ? this.data1 : this.data2;
+    return data;
   }
   renderColHeader(val, i) {
     if (this.transpose) return this.renderHeader2(i);
@@ -99,7 +99,9 @@ class UserMarks extends React.Component {
   render() {
     const { units, users, title, id } = this.props.course;
     const { transpose } = this.state;
-    this.renderer.setData(users, units, TableRenderer.buildCells(units), id);
+    const visUnits = units.filter(u => u.answerable);
+    const cells = TableRenderer.buildCells(visUnits);
+    this.renderer.setData(users, visUnits, cells, id);
     this.renderer.transpose = transpose;
     return (
       <div className={s.root}>

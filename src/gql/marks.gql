@@ -14,6 +14,7 @@ query marks($ids: [String], $userIds: [String]) {
     units {
       id
       title
+      answerable
       answers(userIds: $userIds) {
         id
         user {
