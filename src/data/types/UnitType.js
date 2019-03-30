@@ -14,7 +14,10 @@ const UnitType = new ObjectType({
   fields: () => ({
     id: { type: new NonNull(StringType) },
     title: { type: new NonNull(StringType) },
-    body: { type: new NonNull(StringType) },
+    body: {
+      type: new NonNull(StringType),
+      resolve: unit => unit.body || '',
+    },
     schema: { type: StringType },
     answers: {
       args: {
