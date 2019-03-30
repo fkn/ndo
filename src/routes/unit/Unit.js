@@ -70,6 +70,12 @@ class Unit extends React.Component {
     };
   }
 
+  static sortUsers(a, b) {
+    const name1 = a.profile.displayName;
+    const name2 = b.profile.displayName;
+    return name1.localeCompare(name2);
+  }
+
   constructor(props) {
     super(props);
     this.state = {
@@ -219,8 +225,9 @@ class Unit extends React.Component {
     let { answerCur } = this.state;
     const ua = Unit.getAnswersByUser(answers, userCur);
     const uids = ua.users.map(u => u.id);
+    ua.users.sort(Unit.sortUsers);
     const users = ua.users.concat(
-      course.users.filter(u => !uids.includes(u.id)),
+      course.users.filter(u => !uids.includes(u.id)).sort(Unit.sortUsers),
     );
     if (!answerCur) answerCur = (ua.answers[ua.answers - 1] || {}).id;
     const answerUser = users.find(u => u.id === userCur);
