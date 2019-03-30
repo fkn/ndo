@@ -229,7 +229,7 @@ class Unit extends React.Component {
     const users = ua.users.concat(
       course.users.filter(u => !uids.includes(u.id)).sort(Unit.sortUsers),
     );
-    if (!answerCur) answerCur = (ua.answers[ua.answers - 1] || {}).id;
+    if (!answerCur) answerCur = (ua.answers[ua.answers.length - 1] || {}).id;
     const answerUser = users.find(u => u.id === userCur);
     const answer = answers.find(ans => ans.id === answerCur);
     return (
