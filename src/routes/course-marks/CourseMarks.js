@@ -89,6 +89,16 @@ class UserMarks extends React.Component {
     }).isRequired,
   };
 
+  static sortUsers(a, b) {
+    const name1 = a.profile.displayName;
+    const name2 = b.profile.displayName;
+    return name1.localeCompare(name2);
+  }
+
+  static sortUnits(a, b) {
+    return a.title.localeCompare(b.title);
+  }
+
   constructor() {
     super();
     this.renderer = new TableRenderer();
@@ -99,36 +109,43 @@ class UserMarks extends React.Component {
   render() {
     const { units, users, title, id } = this.props.course;
     const { transpose } = this.state;
-    const visUnits = units.filter(u => u.answerable);
+    const visUsers = users
+      .filter(u => u.role === 'student')
+      .sort(UserMarks.sortUsers);
+    const visUnits = units.filter(u => u.answerable).sort(UserMarks.sortUnits);
     const cells = TableRenderer.buildCells(visUnits);
-    this.renderer.setData(users, visUnits, cells, id);
+    this.renderer.setData(visUsers, visUnits, cells, id);
     this.renderer.transpose = transpose;
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>Marks of {title}</h1>
-          <Table>
-            <thead>
-              <tr>
-                <th className={s.noneEvents} />
-                {this.renderer.cols().map((val, i) => (
-                  <th key={val.id}>{this.renderer.renderColHeader(val, i)}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderer.rows().map((val, i) => (
-                <tr key={val.id}>
-                  <th className={s.rowHeader}>
-                    {this.renderer.renderRowHeader(val, i)}
-                  </th>
-                  {this.renderer
-                    .cols()
-                    .map((val2, j) => this.renderer.renderCell(i, j))}
+          <div className={s.tableScroller}>
+            <Table>
+              <thead>
+                <tr>
+                  <th className={s.ltCorner} />
+                  {this.renderer.cols().map((val, i) => (
+                    <th key={val.id}>
+                      {this.renderer.renderColHeader(val, i)}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </Table>
+              </thead>
+              <tbody>
+                {this.renderer.rows().map((val, i) => (
+                  <tr key={val.id}>
+                    <th className={s.rowHeader}>
+                      {this.renderer.renderRowHeader(val, i)}
+                    </th>
+                    {this.renderer
+                      .cols()
+                      .map((val2, j) => this.renderer.renderCell(i, j))}
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
           <FormGroup controlId="transpose">
             <Checkbox
               checked={transpose}

@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import CourseMarks from './CourseMarks';
 import marksQuery from '../../gql/marks.gql';
 
-const title = 'Users of Course';
+const title = 'Marks of Course';
 
 async function action({ fetch, params, store }) {
   const { user } = store.getState();

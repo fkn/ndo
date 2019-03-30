@@ -14,6 +14,10 @@
   padding-right: 20px;
 }
 
+.tableScroller {
+  overflow-x: scroll;
+}
+
 .container {
   margin: 0 auto;
   padding: 0 0 40px;
@@ -40,8 +44,13 @@
   background-color: #ddd;
 }
 
-.noneEvents {
+.ltCorner {
   pointer-events: none;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: white;
+  transform: none !important;
 }
 
 .rowHeader {
@@ -49,6 +58,9 @@
   white-space: nowrap;
   overflow-x: hidden;
   text-overflow: ellipsis;
+  position: sticky;
+  left: 0;
+  background-color: white;
 }
 
 .rowHeader:hover {
