@@ -2,7 +2,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Table } from 'react-bootstrap';
+import { Table, FormGroup, Checkbox } from 'react-bootstrap';
 import s from './CourseMarks.css';
 import { UnitPropType } from './AnswerList';
 import User from '../../components/User/User';
@@ -20,22 +20,34 @@ class TableRenderer {
     this.dataCell = dataCell;
     this.courseId = courseId;
   }
-  cols() {
-    return this.data1;
-  }
-  rows() {
-    return this.data2;
-  }
-  renderColHeader(val, i) {
+  renderHeader1(i) {
     return <User key={this.data1[i].id} user={this.data1[i]} hideTags />;
   }
-  renderRowHeader(val, i) {
+  renderHeader2(i) {
     const { id, title } = this.data2[i];
     return <Link to={`/courses/${this.courseId}/${id}`}>{title}</Link>;
   }
+  cols() {
+    if (this.transpose) return this.data2;
+    return this.data1;
+  }
+  rows() {
+    if (this.transpose) return this.data1;
+    return this.data2;
+  }
+  renderColHeader(val, i) {
+    if (this.transpose) return this.renderHeader2(i);
+    return this.renderHeader1(i);
+  }
+  renderRowHeader(val, i) {
+    if (this.transpose) return this.renderHeader1(i);
+    return this.renderHeader2(i);
+  }
   // eslint-disable-next-line class-methods-use-this
   renderCell(i, j) {
-    const id = `${this.rows()[i].id} ${this.cols()[j].id}`;
+    const id = this.transpose
+      ? `${this.cols()[j].id} ${this.rows()[i].id}`
+      : `${this.rows()[i].id} ${this.cols()[j].id}`;
     const data = this.dataCell.get(id);
     const tags = [s.mark];
     if (!(data && data.length)) tags.push(s.noAnswer);
@@ -82,9 +94,13 @@ class UserMarks extends React.Component {
     this.renderer = new TableRenderer();
   }
 
+  state = {};
+
   render() {
     const { units, users, title, id } = this.props.course;
+    const { transpose } = this.state;
     this.renderer.setData(users, units, TableRenderer.buildCells(units), id);
+    this.renderer.transpose = transpose;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -111,6 +127,14 @@ class UserMarks extends React.Component {
               ))}
             </tbody>
           </Table>
+          <FormGroup controlId="transpose">
+            <Checkbox
+              checked={transpose}
+              onChange={ev => this.setState({ transpose: ev.target.checked })}
+            >
+              Tranpose table
+            </Checkbox>
+          </FormGroup>
         </div>
       </div>
     );
