@@ -215,18 +215,14 @@ class Unit extends React.Component {
 
   render() {
     const { user = {}, role, unit, course, dispatch } = this.props;
-    const {
-      answers = [],
-      userCur,
-      answerCur,
-      saveStatus,
-      saveMassage,
-    } = this.state;
+    const { answers = [], userCur, saveStatus, saveMassage } = this.state;
+    let { answerCur } = this.state;
     const ua = Unit.getAnswersByUser(answers, userCur);
     const uids = ua.users.map(u => u.id);
     const users = ua.users.concat(
       course.users.filter(u => !uids.includes(u.id)),
     );
+    if (!answerCur) answerCur = (ua.answers[ua.answers - 1] || {}).id;
     const answerUser = users.find(u => u.id === userCur);
     const answer = answers.find(ans => ans.id === answerCur);
     return (
