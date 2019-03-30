@@ -222,14 +222,15 @@ class Unit extends React.Component {
   render() {
     const { user = {}, role, unit, course, dispatch } = this.props;
     const { answers = [], userCur, saveStatus, saveMassage } = this.state;
-    let { answerCur } = this.state;
+    const { answerCur } = this.state;
     const ua = Unit.getAnswersByUser(answers, userCur);
     const uids = ua.users.map(u => u.id);
     ua.users.sort(Unit.sortUsers);
     const users = ua.users.concat(
       course.users.filter(u => !uids.includes(u.id)).sort(Unit.sortUsers),
     );
-    if (!answerCur) answerCur = (ua.answers[ua.answers.length - 1] || {}).id;
+    // TODO: select latest answer
+    // if (!answerCur) answerCur = (ua.answers[ua.answers.length - 1] || {}).id;
     const answerUser = users.find(u => u.id === userCur);
     const answer = answers.find(ans => ans.id === answerCur);
     return (
