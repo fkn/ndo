@@ -23,7 +23,7 @@ function getLatestMark(answers) {
     .reduce((res, am) => {
       if (!am.mark) return res;
       if (!res.mark) return am;
-      if (new Date(am.mark.createdAt) - new Date(res.mark.createdAt) > 0)
+      if (new Date(am.answer.updatedAt) - new Date(res.answer.updatedAt) > 0)
         return am;
       return res;
     });
