@@ -26,6 +26,10 @@ const AnswerType = new ObjectType({
       type: StringType,
       resolve: answer => answer.createdAt.toISOString(),
     },
+    updatedAt: {
+      type: StringType,
+      resolve: answer => answer.updatedAt.toISOString(),
+    },
     unit: {
       type: UnitType,
       resolve: answer => answer.getUnit(),

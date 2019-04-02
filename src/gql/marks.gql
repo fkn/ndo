@@ -17,6 +17,7 @@ query marks($ids: [String], $userIds: [String]) {
       answerable
       answers(userIds: $userIds) {
         id
+        updatedAt
         user {
           id
           email
