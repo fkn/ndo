@@ -221,16 +221,20 @@ class Unit extends React.Component {
 
   render() {
     const { user = {}, role, unit, course, dispatch } = this.props;
-    const { answers = [], userCur, saveStatus, saveMassage } = this.state;
-    const { answerCur } = this.state;
+    const {
+      answers = [],
+      userCur = user.id,
+      saveStatus,
+      saveMassage,
+    } = this.state;
+    let { answerCur } = this.state;
     const ua = Unit.getAnswersByUser(answers, userCur);
     const uids = ua.users.map(u => u.id);
     ua.users.sort(Unit.sortUsers);
     const users = ua.users.concat(
       course.users.filter(u => !uids.includes(u.id)).sort(Unit.sortUsers),
     );
-    // TODO: select latest answer
-    // if (!answerCur) answerCur = (ua.answers[ua.answers.length - 1] || {}).id;
+    if (!answerCur) answerCur = (ua.answers[ua.answers.length - 1] || {}).id;
     const answerUser = users.find(u => u.id === userCur);
     const answer = answers.find(ans => ans.id === answerCur);
     return (
@@ -248,43 +252,43 @@ class Unit extends React.Component {
             )}
             {(role === 'teacher' || user.isAdmin) &&
               unit.answerable && (
-                <React.Fragment>
-                  <DropdownButton
-                    id="user_chooser"
-                    title={
-                      (answerUser && answerUser.profile.displayName) || 'User'
-                    }
-                    onSelect={this.handleUserSelect}
-                  >
-                    {users.map(u => (
-                      <MenuItem
-                        key={u.id}
-                        eventKey={u.id}
-                        active={u.id === userCur}
-                        className={u.needMark && s['need-mark']}
-                      >
-                        {u.profile.displayName}
-                      </MenuItem>
-                    ))}
-                  </DropdownButton>
-                  <DropdownButton
-                    id="answer_chooser"
-                    title={(answer && answer.createdAt) || 'Answer'}
-                    onSelect={this.handleAnswerSelect}
-                  >
-                    {ua.answers.map(ans => (
-                      <MenuItem
-                        key={ans.id}
-                        eventKey={ans.id}
-                        active={ans.id === answerCur}
-                        className={ans.needMark && s['need-mark']}
-                      >
-                        {ans.createdAt}
-                      </MenuItem>
-                    ))}
-                  </DropdownButton>
-                </React.Fragment>
+                <DropdownButton
+                  id="user_chooser"
+                  title={
+                    (answerUser && answerUser.profile.displayName) || 'User'
+                  }
+                  onSelect={this.handleUserSelect}
+                >
+                  {users.map(u => (
+                    <MenuItem
+                      key={u.id}
+                      eventKey={u.id}
+                      active={u.id === userCur}
+                      className={u.needMark && s['need-mark']}
+                    >
+                      {u.profile.displayName}
+                    </MenuItem>
+                  ))}
+                </DropdownButton>
               )}
+            {unit.answerable && (
+              <DropdownButton
+                id="answer_chooser"
+                title={(answer && answer.createdAt) || 'Answer'}
+                onSelect={this.handleAnswerSelect}
+              >
+                {ua.answers.map(ans => (
+                  <MenuItem
+                    key={ans.id}
+                    eventKey={ans.id}
+                    active={ans.id === answerCur}
+                    className={ans.needMark && s['need-mark']}
+                  >
+                    {ans.createdAt}
+                  </MenuItem>
+                ))}
+              </DropdownButton>
+            )}
           </h1>
           <UnitView
             answerId={this.props.answer.id}
