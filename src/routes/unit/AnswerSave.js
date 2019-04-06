@@ -5,7 +5,7 @@ import MarksTable from '../../components/MarksTable';
 import updateAnswer from '../../gql/updateAnswer.gql';
 import createAnswer from '../../gql/createAnswer.gql';
 
-class UnitAnswer extends React.Component {
+class AnswerSave extends React.Component {
   state = {};
 
   /**
@@ -110,7 +110,7 @@ class UnitAnswer extends React.Component {
   }
 }
 
-UnitAnswer.propTypes = {
+AnswerSave.propTypes = {
   user: PropTypes.shape({
     id: PropTypes.string,
     role: PropTypes.string,
@@ -125,8 +125,8 @@ UnitAnswer.propTypes = {
   }).isRequired,
 };
 
-UnitAnswer.contextTypes = {
+AnswerSave.contextTypes = {
   fetch: PropTypes.func.isRequired,
 };
 
-export default UnitAnswer;
+export default AnswerSave;

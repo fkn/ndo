@@ -12,7 +12,7 @@ import Link from '../../components/Link/Link';
 import ModalUnitEdit from '../../components/ModalUnitEdit';
 import { showModal } from '../../actions/modals';
 import IconButton from '../../components/IconButton';
-import UnitAnswer from './UnitAnswer';
+import AnswerSave from './AnswerSave';
 
 class Unit extends React.Component {
   static propTypes = {
@@ -217,7 +217,7 @@ class Unit extends React.Component {
             }
           />
           {unit.answerable && (
-            <UnitAnswer
+            <AnswerSave
               course={course}
               unit={unit}
               user={user}
