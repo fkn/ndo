@@ -32,7 +32,7 @@ class Unit extends React.Component {
     }).isRequired,
     answer: PropTypes.shape({
       id: PropTypes.string,
-      body: PropTypes.shape,
+      body: PropTypes.any,
     }).isRequired,
     answerUser: PropTypes.shape({
       id: PropTypes.string,

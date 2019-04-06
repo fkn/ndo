@@ -11,7 +11,10 @@ const htmlToReactParser = new HtmlToReact.Parser();
 class UnitView extends React.Component {
   static propTypes = {
     body: PropTypes.string.isRequired,
-    value: PropTypes.instanceOf(Object),
+    value: PropTypes.oneOfType([
+      PropTypes.instanceOf(Object),
+      PropTypes.string,
+    ]),
     onChange: PropTypes.func,
     onHeadersChange: PropTypes.func,
   };

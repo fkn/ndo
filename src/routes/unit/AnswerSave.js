@@ -121,7 +121,7 @@ AnswerSave.propTypes = {
   }).isRequired,
   answer: PropTypes.shape({
     id: PropTypes.string,
-    body: PropTypes.shape,
+    body: PropTypes.any,
   }).isRequired,
 };
 

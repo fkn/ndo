@@ -109,11 +109,17 @@ AnswerSelect.propTypes = {
   }).isRequired,
   answer: PropTypes.shape({
     id: PropTypes.string,
-    body: PropTypes.shape,
+    body: PropTypes.any,
   }).isRequired,
   course: PropTypes.shape({
     id: PropTypes.string,
-    users: PropTypes.array,
+    users: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        email: PropTypes.string,
+        role: PropTypes.string,
+      }),
+    ),
   }).isRequired,
   dispatch: PropTypes.func.isRequired,
 };

@@ -17,13 +17,14 @@ class TextEditor extends React.Component {
   static propTypes = {
     value: PropTypes.string,
     onChange: PropTypes.func.isRequired,
-    onLoad: PropTypes.func.isRequired,
+    onLoad: PropTypes.func,
     mode: PropTypes.string,
   };
 
   static defaultProps = {
     mode: 'html',
     value: '',
+    onLoad: () => {},
   };
 
   constructor() {
