@@ -2,6 +2,10 @@
   overflow-x: scroll;
 }
 
+.tableScroller > table {
+  max-width: none;
+}
+
 .ltCorner {
   pointer-events: none;
   position: sticky;
