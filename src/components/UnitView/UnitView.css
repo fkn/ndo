@@ -2,6 +2,10 @@
   padding: 0;
 }
 
+.root img {
+  max-width: 100%;
+}
+
 .inputFile {
   display: flex;
 }
