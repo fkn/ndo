@@ -85,6 +85,7 @@ class AnswerSelect extends React.Component {
   render() {
     const {
       user,
+      role,
       answerUser = { profile: {} },
       answer = {},
       course,
@@ -93,7 +94,7 @@ class AnswerSelect extends React.Component {
     const { users = [] } = course;
     return (
       <React.Fragment>
-        {(user.role === 'teacher' || user.isAdmin) && (
+        {(role === 'teacher' || user.isAdmin) && (
           <DropdownButton
             id="user_chooser"
             title={answerUser.profile.displayName || 'User'}
@@ -138,8 +139,8 @@ class AnswerSelect extends React.Component {
 AnswerSelect.propTypes = {
   user: PropTypes.shape({
     id: PropTypes.string,
-    role: PropTypes.string,
   }).isRequired,
+  role: PropTypes.string.isRequired,
   unit: PropTypes.shape({
     id: PropTypes.string,
   }).isRequired,
@@ -169,6 +170,7 @@ AnswerSelect.contextTypes = {
 };
 
 const mapStateToProps = state => ({
+  user: state.user,
   unit: state.unit,
   answer: state.answer,
   answerUser: state.answerUser || state.course.users[0],

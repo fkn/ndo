@@ -68,15 +68,7 @@ class Unit extends React.Component {
   }
 
   render() {
-    const {
-      user = {},
-      role,
-      unit,
-      course,
-      dispatch,
-      answerUser,
-      answer,
-    } = this.props;
+    const { role, unit, course, dispatch, answer } = this.props;
     return (
       <div className={s.root}>
         <ModalUnitEdit modalId="modalUnitEdit" />
@@ -90,7 +82,7 @@ class Unit extends React.Component {
                 glyph="pencil"
               />
             )}
-            {unit.answerable && <AnswerSelect user={user} />}
+            {unit.answerable && <AnswerSelect role={role} />}
           </h1>
           <UnitView
             answerId={answer.id}
@@ -103,15 +95,7 @@ class Unit extends React.Component {
               )
             }
           />
-          {unit.answerable && (
-            <AnswerSave
-              course={course}
-              unit={unit}
-              user={{ ...user, role }}
-              answer={answer}
-              answerUser={answerUser}
-            />
-          )}
+          {unit.answerable && <AnswerSave role={role} />}
         </div>
       </div>
     );

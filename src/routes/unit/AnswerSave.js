@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { Alert, Button } from 'react-bootstrap';
 import MarksTable from '../../components/MarksTable';
 import updateAnswer from '../../gql/updateAnswer.gql';
@@ -82,7 +83,7 @@ class AnswerSave extends React.Component {
   };
 
   render() {
-    const { answerUser, answer, user } = this.props;
+    const { answerUser, answer, user, role } = this.props;
     const { status, message, isSaving } = this.state;
     return (
       <React.Fragment>
@@ -97,7 +98,7 @@ class AnswerSave extends React.Component {
         ) : (
           <p>
             This unit has no answers yet
-            {user.role === 'teacher' &&
+            {role === 'teacher' &&
               user && (
                 <Button size="sm" onClick={this.addEmptyAnswer}>
                   Add empty answer
@@ -113,8 +114,8 @@ class AnswerSave extends React.Component {
 AnswerSave.propTypes = {
   user: PropTypes.shape({
     id: PropTypes.string,
-    role: PropTypes.string,
   }).isRequired,
+  role: PropTypes.string.isRequired,
   answerUser: PropTypes.shape({
     id: PropTypes.string,
     email: PropTypes.string,
@@ -129,4 +130,12 @@ AnswerSave.contextTypes = {
   fetch: PropTypes.func.isRequired,
 };
 
-export default AnswerSave;
+const mapStateToProps = state => ({
+  course: state.course,
+  unit: state.unit,
+  user: state.user,
+  answer: state.answer,
+  answerUser: state.answerUser,
+});
+
+export default connect(mapStateToProps)(AnswerSave);
