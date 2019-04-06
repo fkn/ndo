@@ -5,6 +5,7 @@ import { DropdownButton, MenuItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './AnswerSelect.css';
 import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
+import loadCourseAnswersQuery from '../../gql/loadCourseAnswers.gql';
 import { setAnswer, setAnswerUser } from '../../actions/units';
 
 class AnswerSelect extends React.Component {
@@ -12,11 +13,15 @@ class AnswerSelect extends React.Component {
 
   componentDidMount() {
     this.updateAnswers();
+    this.updateUsers();
   }
 
   async componentDidUpdate(prevProps) {
     if (this.props.answerUser.id !== prevProps.answerUser.id) {
       await this.updateAnswers();
+    }
+    if (this.props.unit.id !== prevProps.unit.id) {
+      await this.updateUsers();
     }
   }
 
@@ -33,9 +38,32 @@ class AnswerSelect extends React.Component {
       }),
     });
     const { data } = await resp.json();
-    const { answers = [] } = data.courses[0].units[0];
+    let { answers = [] } = data.courses[0].units[0];
+    answers = answers.map(a => ({
+      ...a,
+      needMark: !a.marks || !a.marks.length,
+    }));
     this.setState({ answers });
     this.props.dispatch(setAnswer(answers[0] || {}));
+  }
+
+  async updateUsers() {
+    const { course, unit } = this.props;
+    const resp = await this.context.fetch('/graphql', {
+      body: JSON.stringify({
+        query: loadCourseAnswersQuery,
+        variables: {
+          unitIds: [unit.id],
+          courseIds: [course.id],
+        },
+      }),
+    });
+    const { data } = await resp.json();
+    const needMark = data.courses[0].units[0].answers.reduce((res, answer) => {
+      if (!answer.marks.length) res.add(answer.user.id);
+      return res;
+    }, new Set());
+    this.setState({ needMark });
   }
 
   handleUserSelect = id => {
@@ -55,7 +83,7 @@ class AnswerSelect extends React.Component {
       answer = {},
       course,
     } = this.props;
-    const { answers } = this.state;
+    const { answers, needMark = new Set() } = this.state;
     const { users = [] } = course;
     return (
       <React.Fragment>
@@ -70,7 +98,7 @@ class AnswerSelect extends React.Component {
                 key={u.id}
                 eventKey={u.id}
                 active={u.id === answerUser.id}
-                className={u.needMark && s['need-mark']}
+                className={needMark.has(u.id) && s['need-mark']}
               >
                 {u.profile.displayName}
               </MenuItem>
@@ -102,6 +130,9 @@ AnswerSelect.propTypes = {
   user: PropTypes.shape({
     id: PropTypes.string,
     role: PropTypes.string,
+  }).isRequired,
+  unit: PropTypes.shape({
+    id: PropTypes.string,
   }).isRequired,
   answerUser: PropTypes.shape({
     id: PropTypes.string,

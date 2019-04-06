@@ -1,0 +1,10 @@
+query loadCourse($courseIds: [String], $unitIds: [String]) {
+  courses(ids: $courseIds) {
+    units(ids: $unitIds) {
+      answers {
+        user { id }
+        marks { id }
+      }
+    }
+  }
+}
