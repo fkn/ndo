@@ -5,6 +5,7 @@ export const ADD_COURSE = 'ADD_COURSE';
 export const ADD_MARK = 'ADD_MARK';
 export const SET_ANSWER = 'SET_ANSWER';
 export const SET_ANSWER_BODY = 'SET_ANSWER_BODY';
+export const SET_ANSWER_USER = 'SER_ANSWER_USER';
 export const UPDATE_COURSE = 'UPDATE_COURSE';
 export const SET_COURSES = 'SET_COURSES';
 export const SET_COURSE = 'SET_COURSE';

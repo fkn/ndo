@@ -6,6 +6,7 @@ import {
   ADD_UNIT,
   SET_UNIT,
   UPDATE_UNIT,
+  SET_ANSWER_USER,
 } from '../constants';
 import createMarkGql from '../gql/createMark.gql';
 import loadAnswerGql from '../gql/loadAnswer.gql';
@@ -37,6 +38,13 @@ export function setAnswerBody(body) {
   return {
     type: SET_ANSWER_BODY,
     data: body,
+  };
+}
+
+export function setAnswerUser(user) {
+  return {
+    type: SET_ANSWER_USER,
+    data: user,
   };
 }
 

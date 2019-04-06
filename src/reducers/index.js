@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import answer from './answer';
+import answerUser from './answerUser';
 import course from './course';
 import courses from './courses';
 import files from './files';
@@ -13,6 +14,7 @@ import users from './users';
 
 export default combineReducers({
   answer,
+  answerUser,
   course,
   courses,
   files,

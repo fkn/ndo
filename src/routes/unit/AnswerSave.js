@@ -73,11 +73,11 @@ class AnswerSave extends React.Component {
   };
 
   addEmptyAnswer = async () => {
-    const { course, unit, userAnswer } = this.props;
+    const { course, unit, answerUser } = this.props;
     await this.sendAnswer(
       createAnswer,
       { body: {}, data: [['upload_order', '[]']] },
-      { courseId: course.id, unitId: unit.id, userId: userAnswer.id },
+      { courseId: course.id, unitId: unit.id, userId: answerUser.id },
     );
   };
 

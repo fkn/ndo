@@ -35,7 +35,11 @@ class UnitView extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ answers: nextProps.value || {} });
+    const answers =
+      typeof nextProps.value === 'string'
+        ? JSON.parse(nextProps.value)
+        : nextProps.value;
+    this.setState({ answers });
     if (this.props.body !== nextProps.body) {
       this.headers = [];
       this.domTree = htmlToReactParser.parseHtml(nextProps.body);
