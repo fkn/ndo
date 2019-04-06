@@ -8,6 +8,12 @@ import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
 import loadCourseAnswersQuery from '../../gql/loadCourseAnswers.gql';
 import { setAnswer, setAnswerUser } from '../../actions/units';
 
+function sortUsers(a, b) {
+  const name1 = a.profile.displayName;
+  const name2 = b.profile.displayName;
+  return name1.localeCompare(name2);
+}
+
 class AnswerSelect extends React.Component {
   state = { answers: [] };
 
@@ -93,16 +99,19 @@ class AnswerSelect extends React.Component {
             title={answerUser.profile.displayName || 'User'}
             onSelect={this.handleUserSelect}
           >
-            {users.map(u => (
-              <MenuItem
-                key={u.id}
-                eventKey={u.id}
-                active={u.id === answerUser.id}
-                className={needMark.has(u.id) && s['need-mark']}
-              >
-                {u.profile.displayName}
-              </MenuItem>
-            ))}
+            {users
+              .slice(0)
+              .sort(sortUsers)
+              .map(u => (
+                <MenuItem
+                  key={u.id}
+                  eventKey={u.id}
+                  active={u.id === answerUser.id}
+                  className={needMark.has(u.id) && s['need-mark']}
+                >
+                  {u.profile.displayName}
+                </MenuItem>
+              ))}
           </DropdownButton>
         )}
         <DropdownButton
