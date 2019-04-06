@@ -1,20 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button, DropdownButton, MenuItem } from 'react-bootstrap';
+import { DropdownButton, MenuItem } from 'react-bootstrap';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
-import MarksTable from '../../components/MarksTable';
 import UnitView from '../../components/UnitView';
 import { setAnswer, setAnswerBody } from '../../actions/units';
 import { setSecondMenu } from '../../actions/menu';
-import updateAnswer from '../../gql/updateAnswer.gql';
-import createAnswer from '../../gql/createAnswer.gql';
 import retrieveAnswerQuery from '../../gql/retrieveAnswer.gql';
 import s from './Unit.css';
 import Link from '../../components/Link/Link';
 import ModalUnitEdit from '../../components/ModalUnitEdit';
 import { showModal } from '../../actions/modals';
 import IconButton from '../../components/IconButton';
+import UnitAnswer from './UnitAnswer';
 
 class Unit extends React.Component {
   static propTypes = {
@@ -81,9 +79,6 @@ class Unit extends React.Component {
     this.state = {
       answerCur: 0,
       answers: [],
-      isSaving: false,
-      saveStatus: '',
-      saveMassage: '',
     };
   }
 
@@ -117,82 +112,6 @@ class Unit extends React.Component {
     );
   };
 
-  /**
-   * Prepare data for sending
-   * @returns {Object} object with body and data fields, where body - Object
-   * with answer, data - additional FormData to be sent
-   */
-  prepareAnswer() {
-    const { body } = this.props.answer;
-    const files = Object.entries(body).filter(
-      ans => ans[1] instanceof window.File,
-    );
-    const uploadOrder = [];
-    const data = [];
-    files.forEach(file => {
-      uploadOrder.push(file[0]);
-      data.push(['upload', file[1]]);
-      delete body[file[0]];
-    });
-    data.unshift(['upload_order', JSON.stringify(uploadOrder)]);
-    return { body, data };
-  }
-
-  /**
-   * Sends prepared data
-   * @param {string} query - query for GraphQL (create or update)
-   * @param {Object} answer - body of the answer
-   * @param {Object} variables - additional varibales for query
-   */
-  sendAnswer(query, answer, variables) {
-    const formData = new FormData();
-    formData.append('query', query);
-    formData.append(
-      'variables',
-      JSON.stringify({ ...variables, body: JSON.stringify(answer.body) }),
-    );
-    answer.data.forEach(d => formData.append(d[0], d[1]));
-    return this.context.fetch('/graphql', {
-      body: formData,
-    });
-  }
-
-  /**
-   * Generates and sends FormData to the server. Expects that
-   * this.props.answers contains Object with fields, some of them may be File
-   */
-  saveAnswer = async () => {
-    const { course, unit } = this.props;
-    this.setState({ isSaving: true });
-    const answerId = this.props.answer.id;
-    const answer = this.prepareAnswer();
-    try {
-      await this.sendAnswer(
-        answerId ? updateAnswer : createAnswer,
-        answer,
-        answerId ? { id: answerId } : { courseId: course.id, unitId: unit.id },
-      );
-      this.setState({
-        saveStatus: 'success',
-        saveMassage: 'save completed successfully',
-      });
-    } catch (e) {
-      this.setState({ saveStatus: 'danger', saveMassage: 'save error' });
-    } finally {
-      this.setState({ isSaving: false });
-    }
-  };
-
-  addEmptyAnswer = async () => {
-    const { course, unit } = this.props;
-    const { userCur } = this.state;
-    await this.sendAnswer(
-      createAnswer,
-      { body: {}, data: [['upload_order', '[]']] },
-      { courseId: course.id, unitId: unit.id, userId: userCur },
-    );
-  };
-
   async retrieveAnswer() {
     const { user, course, unit } = this.props;
     const resp = await this.context.fetch('/graphql', {
@@ -221,12 +140,7 @@ class Unit extends React.Component {
 
   render() {
     const { user = {}, role, unit, course, dispatch } = this.props;
-    const {
-      answers = [],
-      userCur = user.id,
-      saveStatus,
-      saveMassage,
-    } = this.state;
+    const { answers = [], userCur = user.id } = this.state;
     let { answerCur } = this.state;
     const ua = Unit.getAnswersByUser(answers, userCur);
     const uids = ua.users.map(u => u.id);
@@ -250,44 +164,45 @@ class Unit extends React.Component {
                 glyph="pencil"
               />
             )}
-            {(role === 'teacher' || user.isAdmin) &&
-              unit.answerable && (
+            {unit.answerable && (
+              <React.Fragment>
+                {(role === 'teacher' || user.isAdmin) && (
+                  <DropdownButton
+                    id="user_chooser"
+                    title={
+                      (answerUser && answerUser.profile.displayName) || 'User'
+                    }
+                    onSelect={this.handleUserSelect}
+                  >
+                    {users.map(u => (
+                      <MenuItem
+                        key={u.id}
+                        eventKey={u.id}
+                        active={u.id === userCur}
+                        className={u.needMark && s['need-mark']}
+                      >
+                        {u.profile.displayName}
+                      </MenuItem>
+                    ))}
+                  </DropdownButton>
+                )}
                 <DropdownButton
-                  id="user_chooser"
-                  title={
-                    (answerUser && answerUser.profile.displayName) || 'User'
-                  }
-                  onSelect={this.handleUserSelect}
+                  id="answer_chooser"
+                  title={(answer && answer.createdAt) || 'Answer'}
+                  onSelect={this.handleAnswerSelect}
                 >
-                  {users.map(u => (
+                  {ua.answers.map(ans => (
                     <MenuItem
-                      key={u.id}
-                      eventKey={u.id}
-                      active={u.id === userCur}
-                      className={u.needMark && s['need-mark']}
+                      key={ans.id}
+                      eventKey={ans.id}
+                      active={ans.id === answerCur}
+                      className={ans.needMark && s['need-mark']}
                     >
-                      {u.profile.displayName}
+                      {ans.createdAt}
                     </MenuItem>
                   ))}
                 </DropdownButton>
-              )}
-            {unit.answerable && (
-              <DropdownButton
-                id="answer_chooser"
-                title={(answer && answer.createdAt) || 'Answer'}
-                onSelect={this.handleAnswerSelect}
-              >
-                {ua.answers.map(ans => (
-                  <MenuItem
-                    key={ans.id}
-                    eventKey={ans.id}
-                    active={ans.id === answerCur}
-                    className={ans.needMark && s['need-mark']}
-                  >
-                    {ans.createdAt}
-                  </MenuItem>
-                ))}
-              </DropdownButton>
+              </React.Fragment>
             )}
           </h1>
           <UnitView
@@ -301,28 +216,15 @@ class Unit extends React.Component {
               )
             }
           />
-          {unit.answerable &&
-            user && (
-              <Button onClick={this.saveAnswer} disabled={this.state.isSaving}>
-                Save
-              </Button>
-            )}
-          {unit.answerable &&
-            saveStatus && <Alert variant={saveStatus}>{saveMassage}</Alert>}
-          {unit.answerable &&
-            (answer ? (
-              <MarksTable />
-            ) : (
-              <p>
-                This unit has no answers yet
-                {role === 'teacher' &&
-                  answerUser && (
-                    <Button size="sm" onClick={this.addEmptyAnswer}>
-                      Add empty answer
-                    </Button>
-                  )}
-              </p>
-            ))}
+          {unit.answerable && (
+            <UnitAnswer
+              course={course}
+              unit={unit}
+              user={user}
+              answer={this.props.answer}
+              answerUser={answerUser}
+            />
+          )}
         </div>
       </div>
     );
