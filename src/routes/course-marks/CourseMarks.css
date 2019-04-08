@@ -21,14 +21,45 @@
 }
 
 .container thead th {
-  transform: translateX(-20px) rotate(-30deg);
-  max-width: 100px;
+  transform: translateX(-111px) translateY(-73px) rotate(30deg);
+  text-align: right;
+  max-width: 60px;
   height: 200px;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+
+.container thead th a {
+  display: block;
+  width: 200px;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: white;
+}
+
+.container thead th:hover {
+  white-space: normal;
+  z-index: 2;
+}
+
+.container thead th:hover a {
+  display: block;
+  width: 200px;
+  max-width: 200px;
+  overflow: visible;
+  z-index: 2;
+}
+
+.container table td {
+  border-top: 1px solid #d0d0d0 !important;
+  border-right: 1px solid #d0d0d0;
 }
 
 .mark {
-  max-width: 100px;
-  width: 100px;
+  max-width: 60px;
+  width: 60px;
   text-align: center;
 }
 
