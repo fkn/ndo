@@ -10,6 +10,7 @@ if (navigator.platform) {
   AceEditor = require('react-ace').default;
   require('brace/mode/html');
   require('brace/mode/json');
+  require('brace/mode/markdown');
   require('brace/theme/chrome');
 }
 

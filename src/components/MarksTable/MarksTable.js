@@ -3,10 +3,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormControl, FormGroup, Table } from 'react-bootstrap';
 import moment from 'moment';
+import parse from 'html-react-parser';
+import MarkdownIt from 'markdown-it';
 import IconButton from '../IconButton/IconButton';
 import { createMark } from '../../actions/units';
 import User from '../User';
 import { getRole } from '../../util/course';
+import TextEditor from '../TextEditor/TextEditor';
 
 class MarksTable extends Component {
   static propTypes = {
@@ -38,7 +41,7 @@ class MarksTable extends Component {
     super(props);
 
     this.state = {
-      mark: '',
+      mark: '0',
       comment: '',
     };
   }
@@ -52,7 +55,12 @@ class MarksTable extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.createMark({ ...this.state, answerId: this.props.answer.id });
+    const md = new MarkdownIt();
+    this.props.createMark({
+      ...this.state,
+      comment: md.render(this.state.comment),
+      answerId: this.props.answer.id,
+    });
   };
 
   handleChange = name => ({ target: { value } }) =>
@@ -86,11 +94,9 @@ class MarksTable extends Component {
                 <tr key={m.id}>
                   <td>{index + 1}</td>
                   <td>{m.mark.toFixed(2)}</td>
-                  <td>{m.comment}</td>
-                  <td>
-                    {`${moment(m.createdAt).fromNow()} ( ${moment(
-                      m.createdAt,
-                    ).format('llll')})`}
+                  <td>{parse(m.comment)}</td>
+                  <td title={moment(m.createdAt).format('llll')}>
+                    {moment(m.createdAt).fromNow()}
                   </td>
                   <td>
                     <User user={m.author} />
@@ -127,12 +133,10 @@ class MarksTable extends Component {
                     </FormGroup>
                   </td>
                   <td colSpan="2">
-                    <FormControl
-                      componentClass="textarea"
-                      rows={1}
-                      placeholder="Comment"
+                    <TextEditor
                       value={comment}
-                      onChange={this.handleChange('comment')}
+                      mode="markdown"
+                      onChange={val => this.setState({ comment: val })}
                     />
                   </td>
                   <td>
