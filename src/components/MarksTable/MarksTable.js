@@ -10,7 +10,7 @@ import IconButton from '../IconButton/IconButton';
 import { createMark } from '../../actions/units';
 import User from '../User';
 import { getRole } from '../../util/course';
-import TextEditor from '../TextEditor/TextEditor';
+import TextEditor from '../TextEditor';
 
 class MarksTable extends Component {
   static propTypes = {
