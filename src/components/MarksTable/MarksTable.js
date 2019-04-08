@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { FormControl, FormGroup, Table } from 'react-bootstrap';
 import moment from 'moment';
+// TODO: reuse it with html-to-react
 import parse from 'html-react-parser';
 import MarkdownIt from 'markdown-it';
 import IconButton from '../IconButton/IconButton';
