@@ -21,10 +21,13 @@ function getLatestMark(answers) {
   return (answers || [])
     .map(a => ({ answer: a, mark: getMark(a.marks) }))
     .reduce((res, am) => {
-      if (!am.mark) return res;
       if (!res.mark) return am;
       if (new Date(am.answer.updatedAt) - new Date(res.answer.updatedAt) > 0)
-        return am;
+        return {
+          answer: am.answer,
+          mark: am.mark || res.mark,
+          noMark: !am.mark,
+        };
       return res;
     });
 }
@@ -77,10 +80,10 @@ class UserMarks extends React.Component {
   };
 
   renderCell = (val, id) => {
-    const { mark, answer } = getLatestMark(val) || {};
+    const { mark, answer, noMark } = getLatestMark(val) || {};
     const tags = [s.mark];
     if (!answer) tags.push(s.noAnswer);
-    if (!mark) tags.push(s.noMark);
+    if (!mark || noMark) tags.push(s.noMark);
     return (
       <td key={id} className={tags.join(' ')}>
         {mark && Math.floor(mark.mark)}
