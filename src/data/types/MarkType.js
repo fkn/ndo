@@ -4,11 +4,11 @@ import {
   GraphQLNonNull as NonNull,
   GraphQLFloat as FloatType,
 } from 'graphql';
-import MarkdownIt from 'markdown-it';
+// import MarkdownIt from 'markdown-it';
 import AnswerType from './AnswerType';
 import UserType from './UserType';
 
-const md = new MarkdownIt();
+// const md = new MarkdownIt();
 
 const MarkType = new ObjectType({
   name: 'MarkType',
@@ -17,7 +17,7 @@ const MarkType = new ObjectType({
     mark: { type: new NonNull(FloatType) },
     comment: {
       type: StringType,
-      resolve: mark => md.render(mark.comment),
+      // resolve: mark => md.render(mark.comment),
     },
     createdAt: {
       type: StringType,
