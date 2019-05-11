@@ -5,6 +5,7 @@ import { FormControl, FormGroup, Table } from 'react-bootstrap';
 import moment from 'moment';
 // TODO: reuse it with html-to-react
 import parse from 'html-react-parser';
+import MarkdownIt from 'markdown-it';
 import IconButton from '../IconButton/IconButton';
 import { createMark } from '../../actions/units';
 import User from '../User';
@@ -55,8 +56,10 @@ class MarksTable extends Component {
 
   handleSubmit = e => {
     e.preventDefault();
+    const md = new MarkdownIt();
     this.props.createMark({
       ...this.state,
+      comment: md.render(this.state.comment),
       answerId: this.props.answer.id,
     });
   };
