@@ -19,7 +19,7 @@ const Mark = Model.define('mark', {
   },
 
   comment: {
-    type: DataType.STRING,
+    type: DataType.TEXT,
   },
 });
 
