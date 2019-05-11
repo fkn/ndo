@@ -6,6 +6,8 @@ import moment from 'moment';
 // TODO: reuse it with html-to-react
 import parse from 'html-react-parser';
 import MarkdownIt from 'markdown-it';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import s from './MarksTable.css';
 import IconButton from '../IconButton/IconButton';
 import { createMark } from '../../actions/units';
 import User from '../User';
@@ -62,6 +64,7 @@ class MarksTable extends Component {
       comment: md.render(this.state.comment),
       answerId: this.props.answer.id,
     });
+    this.setState({ comment: '', mark: 0 });
   };
 
   handleChange = name => ({ target: { value } }) =>
@@ -114,7 +117,7 @@ class MarksTable extends Component {
               {(user.isAdmin || role === 'teacher') && (
                 <tr>
                   <td />
-                  <td>
+                  <td className={s.markColumn}>
                     <FormGroup
                       bsClass="mb-0"
                       controlId="mark"
@@ -166,4 +169,4 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   { createMark },
-)(MarksTable);
+)(withStyles(s)(MarksTable));
