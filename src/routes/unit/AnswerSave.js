@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Alert, Button } from 'react-bootstrap';
 import MarksTable from '../../components/MarksTable';
-import updateAnswer from '../../gql/updateAnswer.gql';
 import createAnswer from '../../gql/createAnswer.gql';
 
 class AnswerSave extends React.Component {
@@ -54,13 +53,13 @@ class AnswerSave extends React.Component {
   saveAnswer = async () => {
     const { course, unit } = this.props;
     this.setState({ isSaving: true });
-    const answerId = this.props.answer.id;
     const answer = this.prepareAnswer();
     try {
       await this.sendAnswer(
-        answerId ? updateAnswer : createAnswer,
+        // TODO: decide if we want answer update
+        createAnswer,
         answer,
-        answerId ? { id: answerId } : { courseId: course.id, unitId: unit.id },
+        { courseId: course.id, unitId: unit.id },
       );
       this.setState({
         status: 'success',
