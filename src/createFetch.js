@@ -52,7 +52,8 @@ function createFetch(
         schema,
         query.query,
         { request: { user } }, // fill in request vars needed by graphql
-        null,
+        // TODO: maybe we can pass here original request
+        { user },
         query.variables,
       );
       return Promise.resolve({

@@ -26,15 +26,21 @@ const UnitType = new ObjectType({
         },
       },
       type: new GraphQLList(AnswerType),
-      resolve: (unit, args) => {
+      resolve: async (unit, args, msg) => {
+        // TODO: use access rights processing
+        if (!msg.user) return [];
         const where = {};
         if (args.userIds) {
           where.userId = args.userIds;
         }
-        const courseUnit = unit.CourseUnit;
+        const { courseUnit } = unit;
         if (courseUnit) {
           where.courseId = courseUnit.courseId;
           where.unitId = courseUnit.unitId;
+          const role = await msg.user.getRole(where.courseId);
+          if (role !== 'teacher') {
+            where.userId = msg.user.id;
+          }
         }
         return unit.getAnswers({ where });
       },

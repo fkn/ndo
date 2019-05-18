@@ -91,14 +91,12 @@ User.createUser = function createUser(args) {
 
 User.prototype.getRole = async function userGetRole(courseId) {
   const course = await Course.findById(courseId, {
-    where: {
-      '$users.Id$': this.id,
-    },
     include: [
       {
         model: User,
         as: 'users',
         required: true,
+        where: { id: this.id },
       },
     ],
   });
