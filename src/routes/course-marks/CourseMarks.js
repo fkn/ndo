@@ -17,16 +17,26 @@ function getLatestMark(answers) {
       return mark;
     });
   }
+  function isMarkActual(answer, mark) {
+    return mark && new Date(mark.createdAt) - new Date(answer.updatedAt) > 0;
+  }
   if (!answers || !answers.length) return undefined;
   return (answers || [])
-    .map(a => ({ answer: a, mark: getMark(a.marks) }))
+    .map(a => {
+      const mark = getMark(a.marks);
+      return {
+        answer: a,
+        mark,
+        noMark: !isMarkActual(a, mark),
+      };
+    })
     .reduce((res, am) => {
       if (!res.mark) return am;
       if (new Date(am.answer.updatedAt) - new Date(res.answer.updatedAt) > 0)
         return {
           answer: am.answer,
           mark: am.mark || res.mark,
-          noMark: !am.mark,
+          noMark: !am.mark || !isMarkActual(am.answer, am.mark),
         };
       return res;
     });

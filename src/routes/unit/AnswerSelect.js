@@ -14,6 +14,14 @@ function sortUsers(a, b) {
   return name1.localeCompare(name2);
 }
 
+function hasActualMark(answer) {
+  const lastMark = answer.marks.reduce((lm, cm) => {
+    if (new Date(lm.createdAt) - new Date(cm.createdAt) < 0) return cm;
+    return lm;
+  });
+  return new Date(lastMark.createdAt) - new Date(answer.updatedAt) >= 0;
+}
+
 class AnswerSelect extends React.Component {
   state = { answers: [] };
 
@@ -47,7 +55,7 @@ class AnswerSelect extends React.Component {
     let { answers = [] } = data.courses[0].units[0];
     answers = answers.map(a => ({
       ...a,
-      needMark: !a.marks || !a.marks.length,
+      needMark: !a.marks || !a.marks.length || !hasActualMark(a),
     }));
     this.setState({ answers });
     this.props.dispatch(setAnswer(answers[0] || {}));
@@ -67,6 +75,7 @@ class AnswerSelect extends React.Component {
     const { data } = await resp.json();
     const needMark = data.courses[0].units[0].answers.reduce((res, answer) => {
       if (!answer.marks.length) res.add(answer.user.id);
+      else if (!hasActualMark(answer)) res.add(answer.user.id);
       return res;
     }, new Set());
     this.setState({ needMark });

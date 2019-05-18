@@ -2,8 +2,12 @@ query loadCourse($courseIds: [String], $unitIds: [String]) {
   courses(ids: $courseIds) {
     units(ids: $unitIds) {
       answers {
+        updatedAt
         user { id }
-        marks { id }
+        marks {
+          id
+          createdAt
+        }
       }
     }
   }
