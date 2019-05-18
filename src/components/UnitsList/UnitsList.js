@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import cn from 'classnames';
 import Link from '../Link/Link';
 import s from './UnitsList.css';
 
@@ -34,8 +35,14 @@ function sortBySchema(units, schema) {
 
 const UnitsList = ({ courseId, units, role, schema }) => (
   <ol>
-    {sortBySchema(units, schema).map(({ id, title, nonSchema }) => (
-      <li key={id} className={nonSchema && s.nonSchema}>
+    {sortBySchema(units, schema).map(({ id, title, nonSchema, answerable }) => (
+      <li
+        key={id}
+        className={cn(
+          nonSchema && s.nonSchema,
+          answerable ? s.answerable : s.nonAnswerable,
+        )}
+      >
         {['student', 'teacher'].includes(role) ? (
           <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
         ) : (
