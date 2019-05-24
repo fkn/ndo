@@ -35,21 +35,24 @@ function sortBySchema(units, schema) {
 
 const UnitsList = ({ courseId, units, role, schema }) => (
   <ol>
-    {sortBySchema(units, schema).map(({ id, title, nonSchema, answerable }) => (
-      <li
-        key={id}
-        className={cn(
-          nonSchema && s.nonSchema,
-          answerable ? s.answerable : s.nonAnswerable,
-        )}
-      >
-        {['student', 'teacher'].includes(role) ? (
-          <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
-        ) : (
-          <span>{title}</span>
-        )}
-      </li>
-    ))}
+    {sortBySchema(units, schema).map(
+      ({ id, title, nonSchema, answerable, weight }) => (
+        <li
+          key={id}
+          className={cn(
+            nonSchema && s.nonSchema,
+            answerable ? s.answerable : s.nonAnswerable,
+          )}
+        >
+          {['student', 'teacher'].includes(role) ? (
+            <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
+          ) : (
+            <span>{title}</span>
+          )}{' '}
+          (weight: {weight})
+        </li>
+      ),
+    )}
   </ol>
 );
 
@@ -58,6 +61,7 @@ UnitsList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string,
       title: PropTypes.string,
+      weight: PropTypes.number,
     }),
   ).isRequired,
   role: PropTypes.string.isRequired,

@@ -1,5 +1,5 @@
-mutation updateUnit($id: String!, $title: String!, $body: String, $schema: String, $answerable: Boolean) {
-  updateUnit(title: $title, id: $id, body: $body, schema: $schema, answerable: $answerable) {
+mutation updateUnit($id: String!, $title: String!, $body: String, $schema: String, $answerable: Boolean, $courseId: String, $weight: Float) {
+  updateUnit(title: $title, id: $id, body: $body, schema: $schema, answerable: $answerable, courseId: $courseId, weight: $weight) {
     id
     title
     body

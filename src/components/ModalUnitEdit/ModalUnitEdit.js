@@ -80,6 +80,7 @@ class ModalUnitEdit extends React.Component {
       body = unit.body,
       schema = unit.schema || '',
       tab = 'unit',
+      weight = 1,
       answerable = unit.answerable,
     } = this.state;
     return (
@@ -89,7 +90,14 @@ class ModalUnitEdit extends React.Component {
         onSubmit={() =>
           dispatch(
             edit
-              ? updateUnit({ title, body, schema, id: unit.id, answerable })
+              ? updateUnit({
+                  title,
+                  body,
+                  schema,
+                  id: unit.id,
+                  answerable,
+                  weight,
+                })
               : addUnit({ title, body, schema, answerable }),
           )
         }
@@ -117,6 +125,17 @@ class ModalUnitEdit extends React.Component {
                 >
                   Student can add answer for this unit
                 </Checkbox>
+              </FormGroup>
+              <FormGroup controlId="weight">
+                <FormControl
+                  name="weight"
+                  type="number"
+                  min="1"
+                  max="100"
+                  step="1"
+                  value={weight}
+                  onChange={this.handleChange}
+                />
               </FormGroup>
               <FormGroup controlId="editor">
                 <TextEditor

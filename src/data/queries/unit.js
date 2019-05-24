@@ -1,4 +1,5 @@
 import {
+  GraphQLFloat as FloatType,
   GraphQLString as StringType,
   GraphQLBoolean as BooleanType,
   GraphQLList as List,
@@ -111,9 +112,20 @@ const updateUnit = {
       description: 'marks if asnswer can be added to the unit',
       type: BooleanType,
     },
+    courseId: {
+      description: 'course id (weight needs it)',
+      type: StringType,
+    },
+    weight: {
+      description: 'weight of marks for unit in a course',
+      type: FloatType,
+    },
   },
-  resolve(parent, { id, ...rest }) {
-    return Unit.findById(id).then(unit => unit.update({ ...rest }));
+  async resolve(parent, { id, courseId, weight, ...rest }) {
+    const unit = await Unit.findById(id);
+    const courses = await unit.getCourses({ where: { id: courseId } });
+    await courses[0].courseUnit.update({ weight });
+    return unit.update({ ...rest });
   },
 };
 

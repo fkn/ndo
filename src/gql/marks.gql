@@ -15,6 +15,7 @@ query marks($ids: [String], $userIds: [String]) {
       id
       title
       answerable
+      weight
       answers(userIds: $userIds) {
         id
         updatedAt

@@ -51,8 +51,8 @@ const UnitType = new ObjectType({
     },
     answerable: { type: BooleanType },
     weight: {
-      type: new NonNull(FloatType),
-      resolve: unit => unit.CourseUnit && unit.CourseUnit.weight,
+      type: FloatType,
+      resolve: unit => (unit.courseUnit && unit.courseUnit.weight) || 1,
     },
   }),
 });

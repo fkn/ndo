@@ -92,8 +92,12 @@ export function addUnit(unit) {
 }
 
 export function updateUnit(unit) {
-  return async (dispatch, _, { graphqlRequest }) => {
-    const { data } = await graphqlRequest(updateUnitGql, unit);
+  return async (dispatch, getState, { graphqlRequest }) => {
+    const { id } = getState().course;
+    const { data } = await graphqlRequest(updateUnitGql, {
+      ...unit,
+      courseId: id,
+    });
     return dispatch(editUnit(data.updateUnit));
   };
 }

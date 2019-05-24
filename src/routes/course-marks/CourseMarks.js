@@ -44,6 +44,7 @@ function getLatestMark(answers) {
 }
 
 function getSummaryMark(summary, units) {
+  const sumWeight = units.reduce((sum, u) => sum + (u.weight || 1), 0);
   const res = Object.entries(summary || {})
     .map(([unitId, val]) => ({
       unit: units.find(u => u.id === unitId),
@@ -51,7 +52,8 @@ function getSummaryMark(summary, units) {
     }))
     .reduce(
       (sum, um) => {
-        sum.mark += _.get(um.mark, 'mark', 0) / units.length;
+        sum.mark +=
+          (_.get(um.mark, 'mark', 0) * (um.unit.weight || 1)) / sumWeight;
         sum.noMark = sum.noMark || um.noMark;
         return sum;
       },
