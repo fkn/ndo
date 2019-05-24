@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { FormGroup, Checkbox } from 'react-bootstrap';
 import s from './CourseMarks.css';
@@ -42,14 +43,51 @@ function getLatestMark(answers) {
     });
 }
 
+function getSummaryMark(summary, units) {
+  const res = Object.entries(summary || {})
+    .map(([unitId, val]) => ({
+      unit: units.find(u => u.id === unitId),
+      ...getLatestMark(val),
+    }))
+    .reduce(
+      (sum, um) => {
+        sum.mark += _.get(um.mark, 'mark', 0) / units.length;
+        sum.noMark = sum.noMark || um.noMark;
+        return sum;
+      },
+      { mark: 0, noMark: false },
+    );
+  return { mark: { mark: res.mark }, answer: true, noMark: res.noMark };
+}
+
+const summaryUnit = {
+  id: 'summary',
+  title: 'Summary',
+  answerable: true,
+};
+
+function buildSummaryCell(m, unit, answer) {
+  const id = `summary ${answer.user.id}`;
+  const summary = m.get(id) || {};
+  summary[unit.id] = summary[unit.id] || [];
+  const u = summary[unit.id];
+  u.push(answer);
+  m.set(id, summary);
+}
+
+function buildCell(m, unit, answer) {
+  const id = `${unit.id} ${answer.user.id}`;
+  const a = m.get(id) || [];
+  a.push(answer);
+  m.set(id, a);
+}
+
 function buildCells(units) {
   const m = new Map();
   for (const unit of units) {
     for (const answer of unit.answers) {
-      const id = `${unit.id} ${answer.user.id}`;
-      const a = m.get(id) || [];
-      a.push(answer);
-      m.set(id, a);
+      buildCell(m, unit, answer);
+      buildSummaryCell(m, unit, answer);
     }
   }
   return m;
@@ -89,8 +127,10 @@ class UserMarks extends React.Component {
     return <Link to={`/courses/${this.props.course.id}/${id}`}>{title}</Link>;
   };
 
-  renderCell = (val, id) => {
-    const { mark, answer, noMark } = getLatestMark(val) || {};
+  renderCell = (units, val, id) => {
+    const { mark, answer, noMark } = id.startsWith('summary')
+      ? getSummaryMark(val, units) || {}
+      : getLatestMark(val) || {};
     const tags = [s.mark];
     if (!answer) tags.push(s.noAnswer);
     if (!mark || noMark) tags.push(s.noMark);
@@ -109,6 +149,7 @@ class UserMarks extends React.Component {
       .sort(UserMarks.sortUsers);
     const visUnits = units.filter(u => u.answerable).sort(UserMarks.sortUnits);
     const cells = buildCells(visUnits);
+    const renderCell = this.renderCell.bind(this, visUnits);
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -117,10 +158,11 @@ class UserMarks extends React.Component {
             transpose={transpose}
             data1={visUsers}
             renderHeader1={this.renderHeader1}
-            data2={visUnits}
+            data2={[].concat(visUnits).concat(summaryUnit)}
             renderHeader2={this.renderHeader2}
             dataCells={cells}
-            renderCell={this.renderCell}
+            // eslint-disable-next-line react/jsx-no-bind
+            renderCell={renderCell}
           />
           <FormGroup controlId="transpose">
             <Checkbox
