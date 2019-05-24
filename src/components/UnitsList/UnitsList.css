@@ -3,7 +3,8 @@
 }
 
 .answerable a::before,
-.nonAnswerable a::before {
+.nonAnswerable a::before,
+.weight {
   display: inline-block;
   width: 4em;
   vertical-align: middle;
@@ -25,4 +26,9 @@
 .nonAnswerable a::before {
   content: 'info';
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+.weight {
+  width: auto;
+  background-color: rgba(51, 122, 183, 0.5);
 }

@@ -49,7 +49,11 @@ const UnitsList = ({ courseId, units, role, schema }) => (
           ) : (
             <span>{title}</span>
           )}{' '}
-          (weight: {weight})
+          {answerable && (
+            <span className={s.weight} title="weight">
+              {weight}
+            </span>
+          )}
         </li>
       ),
     )}
