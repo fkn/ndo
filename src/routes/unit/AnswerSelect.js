@@ -58,7 +58,7 @@ class AnswerSelect extends React.Component {
       needMark: !a.marks || !a.marks.length || !hasActualMark(a),
     }));
     this.setState({ answers });
-    this.props.dispatch(setAnswer(answers[0] || {}));
+    this.props.dispatch(setAnswer(answers[answers.length - 1] || {}));
   }
 
   async updateUsers() {
