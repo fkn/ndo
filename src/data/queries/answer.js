@@ -9,6 +9,7 @@ import { Answer, File } from '../models';
 import AnswerType from '../types/AnswerType';
 import Model from '../sequelize';
 import { NoAccessError } from '../../errors';
+import logger from '../../logger';
 
 const answers = {
   type: new List(AnswerType),
@@ -110,6 +111,7 @@ const createAnswer = {
   },
   resolve: ({ request }, args) =>
     Model.transaction(async t => {
+      logger.info({ message: 'createAnswer', body: args.body });
       const answer = await Answer.create(
         {
           ...args,
