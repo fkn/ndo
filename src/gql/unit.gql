@@ -9,31 +9,32 @@ query courses($idCourse: [String], $idUnit: [String], $idUser: [String]) {
         displayName
       }
     }
+    units(ids: $idUnit) {
+      id
+      title
+      body
+      schema
+      answerable
+      weight
+      answers(userIds: $idUser) {
+        createdAt
+        user {
+          profile {
+            displayName
+          }
+        }
+        marks {
+          id
+          mark
+          comment
+          createdAt
+        }
+      }
+    }
   }
   courseRole: courses(ids: $idCourse) {
     users(ids: $idUser) {
       role
-    }
-  }
-  units(ids: $idUnit) {
-    id
-    title
-    body
-    schema
-    answerable
-    answers(userIds: $idUser) {
-      createdAt
-      user {
-        profile {
-          displayName
-        }
-      }
-      marks {
-        id
-        mark
-        comment
-        createdAt
-      }
     }
   }
 }
