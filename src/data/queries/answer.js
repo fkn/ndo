@@ -111,7 +111,11 @@ const createAnswer = {
   },
   resolve: ({ request }, args) =>
     Model.transaction(async t => {
-      logger.info({ message: 'createAnswer', body: args.body });
+      logger.info({
+        message: 'createAnswer',
+        body: args.body,
+        upload_order: _.get(request, 'body.upload_order'),
+      });
       const answer = await Answer.create(
         {
           ...args,
