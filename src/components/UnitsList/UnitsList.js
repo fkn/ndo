@@ -33,32 +33,37 @@ function sortBySchema(units, schema) {
   return res;
 }
 
-const UnitsList = ({ courseId, units, role, schema }) => (
-  <ol>
-    {sortBySchema(units, schema).map(
-      ({ id, title, nonSchema, answerable, weight }) => (
-        <li
-          key={id}
-          className={cn(
-            nonSchema && s.nonSchema,
-            answerable ? s.answerable : s.nonAnswerable,
-          )}
-        >
-          {['student', 'teacher'].includes(role) ? (
-            <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
-          ) : (
-            <span>{title}</span>
-          )}{' '}
-          {answerable && (
-            <span className={s.weight} title="weight">
-              {weight}
-            </span>
-          )}
-        </li>
-      ),
-    )}
-  </ol>
-);
+const UnitsList = ({ courseId, units, role, schema }) => {
+  const sumWeight = units
+    .filter(u => u.answerable)
+    .reduce((sum, u) => sum + (u.weight || 1), 0);
+  return (
+    <ol>
+      {sortBySchema(units, schema).map(
+        ({ id, title, nonSchema, answerable, weight }) => (
+          <li
+            key={id}
+            className={cn(
+              nonSchema && s.nonSchema,
+              !answerable && s.nonAnswerable,
+            )}
+          >
+            {answerable && (
+              <span className={s.weight} title="weight">
+                {Math.round((weight / sumWeight) * 100)}
+              </span>
+            )}
+            {['student', 'teacher'].includes(role) ? (
+              <Link to={`/courses/${courseId}/${id}`}>{title}</Link>
+            ) : (
+              <span>{title}</span>
+            )}
+          </li>
+        ),
+      )}
+    </ol>
+  );
+};
 
 UnitsList.propTypes = {
   units: PropTypes.arrayOf(

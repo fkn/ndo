@@ -2,11 +2,10 @@
   background-color: #feffda;
 }
 
-.answerable a::before,
-.nonAnswerable a::before,
+.nonAnswerable::before,
 .weight {
   display: inline-block;
-  width: 4em;
+  min-width: 4em;
   vertical-align: middle;
   color: white;
   border-radius: 5px;
@@ -18,17 +17,11 @@
   text-align: center;
 }
 
-.answerable a::before {
-  content: 'lab';
-  background-color: rgba(51, 122, 183, 0.5);
-}
-
-.nonAnswerable a::before {
+.nonAnswerable::before {
   content: 'info';
   background-color: rgba(0, 0, 0, 0.5);
 }
 
 .weight {
-  width: auto;
   background-color: rgba(51, 122, 183, 0.5);
 }
