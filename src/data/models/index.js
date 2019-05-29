@@ -8,20 +8,22 @@
  */
 
 import sequelize from '../sequelize';
-import User from './User';
-import UserLogin from './UserLogin';
-import UserClaim from './UserClaim';
-import UserProfile from './UserProfile';
-import Course from './Course';
-import Unit from './Unit';
-import CourseUnit from './CourseUnit';
-import UserCourse from './UserCourse';
 import Answer from './Answer';
-import Mark from './Mark';
-import Group from './Group';
-import UserGroup from './UserGroup';
+import CjProblem from './CjProblem';
+import CjTest from './CjTest';
+import Course from './Course';
+import CourseUnit from './CourseUnit';
 import File from './File';
 import FileParent from './FileParent';
+import Group from './Group';
+import Mark from './Mark';
+import Unit from './Unit';
+import User from './User';
+import UserClaim from './UserClaim';
+import UserCourse from './UserCourse';
+import UserGroup from './UserGroup';
+import UserLogin from './UserLogin';
+import UserProfile from './UserProfile';
 
 User.hasMany(UserLogin, {
   foreignKey: 'userId',
@@ -112,6 +114,8 @@ Answer.hasMany(Mark);
 Mark.belongsTo(Answer);
 Mark.belongsTo(User, { as: 'author' });
 
+CjProblem.hasMany(CjTest);
+
 function sync(...args) {
   return sequelize.sync(...args);
 }
@@ -127,6 +131,8 @@ export {
   Mark,
   Unit,
   User,
+  CjProblem,
+  CjTest,
   UserClaim,
   UserCourse,
   UserGroup,
