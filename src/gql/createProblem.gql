@@ -1,0 +1,6 @@
+mutation createProblem($title: String!) {
+  createProblem(title: $title) {
+    id
+    title
+  }
+}

@@ -1,8 +1,8 @@
 /* eslint-disable global-require */
 
+import { fetchCourse } from '../actions/courses';
 import { setSecondMenu } from '../actions/menu';
 import { getCourseSecondMenu } from './menu';
-import { fetchCourse } from '../actions/courses';
 
 // The top-level (parent) route
 const routes = {
@@ -74,6 +74,14 @@ const routes = {
     {
       path: '/tests',
       load: () => import(/* webpackChunkName: 'tests' */ './tests'),
+    },
+    {
+      path: '/codejudge',
+      load: () => import(/* webpackChunkName: 'codejudge' */ './codejudge'),
+    },
+    {
+      path: '/users/:idUser',
+      load: () => import(/* webpackChunkName: 'users' */ './user'),
     },
     // Wildcard routes, e.g. { path: '(.*)', ... } (must go last)
     {
