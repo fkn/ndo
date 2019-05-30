@@ -1,6 +1,6 @@
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { showModal } from '../../actions/modals';
@@ -29,7 +29,7 @@ class Codejudge extends Component {
   };
 
   render() {
-    const { userId, dispatch, problems } = this.props;
+    const { userId, dispatch, problems, modals } = this.props;
 
     return (
       <div className={s.root}>
@@ -47,19 +47,28 @@ class Codejudge extends Component {
             modalId="modalAddProblem"
             defaultFooter="add_close"
           />
+          <Modal defaultFooter="close" modalId="problemModal">
+            <Modal.Body>
+              {modals.problemModal_data && (
+                <Fragment>
+                  <h2>{modals.problemModal_data.title}</h2>
+                  <ListGroup>
+                    {modals.problemModal_data.tests.map(({ idcjtest, id }) => (
+                      <ListGroupItem key={id}>{idcjtest}</ListGroupItem>
+                    ))}
+                  </ListGroup>
+                </Fragment>
+              )}
+            </Modal.Body>
+          </Modal>
           <ListGroup>
-            <Modal defaultFooter="close" modalId="problemModal">
-              <Modal.Body>
-                <h2>{this.props.modals.problemModal_data}</h2>
-              </Modal.Body>
-            </Modal>
-            {problems.map(({ id, title }) => (
+            {problems.map(problem => (
               <ListGroupItem
                 action
-                onClick={() => dispatch(showModal('problemModal', title))}
-                key={id}
+                onClick={() => dispatch(showModal('problemModal', problem))}
+                key={problem.id}
               >
-                {title}
+                {problem.title}
               </ListGroupItem>
             ))}
           </ListGroup>
