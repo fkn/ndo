@@ -1,5 +1,5 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { ListGroup, ListGroupItem } from 'react-bootstrap';
 import User from '../User';
 import Action from './Action';
@@ -14,7 +14,7 @@ class UsersList extends React.Component {
         role: PropTypes.string,
       }),
     ).isRequired,
-    children: PropTypes.arrayOf(PropTypes.React),
+    children: PropTypes.arrayOf(PropTypes.element),
     actionsTitle: PropTypes.string,
   };
 
