@@ -5,6 +5,7 @@ import {
 } from 'graphql';
 import { NoAccessError, NotLoggedInError } from '../../errors';
 import CjProblem from '../models/CjProblem';
+import CjTest from '../models/CjTest';
 import CjProblemType from '../types/CjProblemType';
 
 const createProblem = {
@@ -42,6 +43,25 @@ const problems = {
   },
 };
 
+const addTestToProblem = {
+  type: CjProblemType,
+  args: {
+    problemId: {
+      description: 'id of the problem',
+      type: new NonNull(StringType),
+    },
+    testId: {
+      description: 'id of the test',
+      type: new NonNull(StringType),
+    },
+  },
+  async resolve(obj, args) {
+    const test = await CjTest.findById(args.testId);
+    const problem = await CjProblem.findById(args.problemId);
+    return problem.setTests(test);
+  },
+};
+
 const updateProblem = {
   type: CjProblemType,
   args: {
@@ -59,4 +79,4 @@ const updateProblem = {
   },
 };
 
-export { createProblem, problems, updateProblem };
+export { createProblem, problems, updateProblem, addTestToProblem };

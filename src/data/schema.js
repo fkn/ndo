@@ -12,7 +12,13 @@ import {
   GraphQLSchema as Schema,
 } from 'graphql';
 import { answers, createAnswer, updateAnswer } from './queries/answer';
-import { createProblem, problems, updateProblem } from './queries/cjproblem';
+import {
+  addTestToProblem,
+  createProblem,
+  problems,
+  updateProblem,
+} from './queries/cjproblem';
+import { cjTests, createCjTest } from './queries/cjtest';
 import {
   addUserToCourse,
   courses,
@@ -52,13 +58,16 @@ const schema = new Schema({
       problems,
       marks,
       groups,
+      cjTests,
     },
   }),
   mutation: new ObjectType({
     name: 'Mutation',
     fields: {
+      createCjTest,
       createCourse,
       createAnswer,
+      addTestToProblem,
       createProblem,
       createUnit,
       createGroup,
