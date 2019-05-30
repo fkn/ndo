@@ -114,7 +114,12 @@ Answer.hasMany(Mark);
 Mark.belongsTo(Answer);
 Mark.belongsTo(User, { as: 'author' });
 
-CjProblem.hasMany(CjTest);
+CjProblem.hasMany(CjTest, {
+  foreignKey: 'problemId',
+  as: 'tests',
+  onUpdate: 'cascade',
+  onDelete: 'cascade',
+});
 
 function sync(...args) {
   return sequelize.sync(...args);
