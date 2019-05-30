@@ -1,26 +1,26 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import React from 'react';
 import {
-  FormControl,
+  Col,
   ControlLabel,
+  FormControl,
   FormGroup,
   HelpBlock,
-  Col,
   Row,
 } from 'react-bootstrap';
-import Modal from '../../components/Modal';
+import { connect } from 'react-redux';
 import {
   addGroup,
-  updateGroup,
   addUserToGroup,
   deleteUserFromGroup,
+  updateGroup,
 } from '../../actions/groups';
-import createGroup from '../../gql/createGroup.gql';
-import updateGroupMutation from '../../gql/updateGroup.gql';
+import Modal from '../../components/Modal';
 import UsersList from '../../components/UsersList';
-import deleteUserFromGroupMutation from '../../gql/deleteUserFromGroup.gql';
 import addUserToGroupMutation from '../../gql/addUserToGroup.gql';
+import createGroup from '../../gql/createGroup.gql';
+import deleteUserFromGroupMutation from '../../gql/deleteUserFromGroup.gql';
+import updateGroupMutation from '../../gql/updateGroup.gql';
 
 class ModalGroupEdit extends React.Component {
   static propTypes = {
@@ -30,7 +30,13 @@ class ModalGroupEdit extends React.Component {
       title: PropTypes.string,
     }).isRequired,
     edit: PropTypes.bool,
-    users: PropTypes.arrayOf({}).isRequired,
+    users: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        isAdmin: PropTypes.bool.isRequired,
+      }),
+    ).isRequired,
   };
 
   static defaultProps = {
