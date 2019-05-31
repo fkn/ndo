@@ -19,6 +19,7 @@ import {
   updateProblem,
 } from './queries/cjproblem';
 import { cjTests, createCjTest } from './queries/cjtest';
+import { createCjSubmission } from './queries/codejudge';
 import {
   addUserToCourse,
   courses,
@@ -65,6 +66,7 @@ const schema = new Schema({
     name: 'Mutation',
     fields: {
       createCjTest,
+      createCjSubmission,
       createCourse,
       createAnswer,
       addTestToProblem,
