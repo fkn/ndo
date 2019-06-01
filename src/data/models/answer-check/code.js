@@ -10,9 +10,7 @@ export default function(val) {
   return async id => {
     if (!val) return 0;
     const source =
-      val && val.type === 'file'
-        ? await getSourceFromFile(val.id)
-        : String(val);
+      val.type === 'file' ? await getSourceFromFile(val.id) : String(val);
     // TODO: get tests for problem ID & run them here on CJ for source
     // eslint-disable-next-line no-console
     console.log(id, source);
