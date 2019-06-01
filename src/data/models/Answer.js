@@ -1,4 +1,5 @@
 import DataType from 'sequelize';
+import vm from 'vm';
 import Model from '../sequelize';
 import Mark from './Mark';
 import * as util from './util';
@@ -40,20 +41,22 @@ class AnswerChecker {
     return checker;
   }
 
-  // TODO: use nodejs vm instead of eval
   /**
    * Any preprocessing related to checker function for key
    * @param {string} key fn key
    */
   build(key) {
-    /* eslint-disable no-new-func */
-    this.fns[key] = new Function(
-      'val',
-      'key',
-      'doc',
-      'schema',
-      this.schema[key].checker,
-    );
+    this.fns[key] = (val, doc, schema) => {
+      let res = 0;
+      try {
+        const sandbox = { val, key, doc, schema };
+        vm.createContext(sandbox);
+        res = vm.runInContext(this.schema[key].checker, sandbox);
+      } catch (e) {
+        console.error(e);
+      }
+      return Math.min(Math.max(+res || 0, 0), 100);
+    };
   }
 
   /**
@@ -63,7 +66,7 @@ class AnswerChecker {
    * @param {*} key key in answer object
    */
   run(answer, key) {
-    return this.fns[key](answer[key], key, answer, this.schema);
+    return this.fns[key](answer[key], answer, this.schema);
   }
 }
 
@@ -74,7 +77,7 @@ class AnswerChecker {
  * @param {string} answerStr answer in JSON
  * @param {string|object} schema represents unit schema
  */
-function getMarkForAnswer(answerStr, schema) {
+function autocheckAnswer(answerStr, schema) {
   if (!answerStr || !schema) return {};
   const answer = JSON.parse(answerStr);
   const checker = AnswerChecker.create(schema);
@@ -87,9 +90,9 @@ function getMarkForAnswer(answerStr, schema) {
   return res;
 }
 
-Answer.hook('afterUpdate', async answer => {
+async function afterUpdateAnswer(answer) {
   const unit = await answer.getUnit();
-  const mark = getMarkForAnswer(answer.body, unit.schema);
+  const mark = autocheckAnswer(answer.body, unit.schema);
   // TODO: use special authorId (or the user who added answer)
   if (mark && mark.mark) {
     Mark.create({
@@ -99,6 +102,9 @@ Answer.hook('afterUpdate', async answer => {
       // authorId: args.authorId,
     });
   }
-});
+}
+
+Answer.hook('afterCreate', afterUpdateAnswer);
+Answer.hook('afterUpdate', afterUpdateAnswer);
 
 export default Answer;
