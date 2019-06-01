@@ -8,7 +8,7 @@ const CjTest = Model.define('cjtest', {
     defaultValue: DataType.UUIDV1,
     primaryKey: true,
   },
-  idcjtest: {
+  idCj: {
     type: DataType.STRING(255),
     allowNull: false,
   },

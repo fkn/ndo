@@ -18,11 +18,12 @@ import {
   problems,
   updateProblem,
 } from './queries/cjproblem';
-import { testsCj, createTestCj } from './queries/cjtest';
+import { testsCj } from './queries/cjtest';
 import {
   createCjSubmission,
   createCjRun,
   createCjTest,
+  deleteCjTest,
 } from './queries/codejudge';
 import {
   addUserToCourse,
@@ -60,10 +61,10 @@ const schema = new Schema({
       courses,
       units,
       answers,
+      testsCj,
       problems,
       marks,
       groups,
-      testsCj,
     },
   }),
   mutation: new ObjectType({
@@ -72,8 +73,8 @@ const schema = new Schema({
       createCjTest,
       createCjSubmission,
       createCjRun,
-      createTestCj,
       createCourse,
+      deleteCjTest,
       createAnswer,
       addTestToProblem,
       createProblem,
