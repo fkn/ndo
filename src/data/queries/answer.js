@@ -7,7 +7,6 @@ import {
 } from 'graphql';
 import { Answer, File } from '../models';
 import AnswerType from '../types/AnswerType';
-import Model from '../sequelize';
 import { NoAccessError } from '../../errors';
 import logger from '../../logger';
 
@@ -37,22 +36,19 @@ const answers = {
   },
 };
 
-async function uploadFiles(request, answer, body, t) {
+async function uploadFiles(request, answer, body) {
   if (!_.get(request, 'body.upload_order')) return body;
   const uploads = JSON.parse(request.body.upload_order);
   for (let i = 0; i < uploads.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
-    const file = await File.uploadFile(
-      {
-        buffer: request.files[i].buffer,
-        internalName: request.files[i].originalname,
-        userId: request.user.id,
-        parentType: 'answer',
-        parentId: answer.id,
-        key: uploads[i],
-      },
-      { transaction: t },
-    );
+    const file = await File.uploadFile({
+      buffer: request.files[i].buffer,
+      internalName: request.files[i].originalname,
+      userId: request.user.id,
+      parentType: 'answer',
+      parentId: answer.id,
+      key: uploads[i],
+    });
     body[uploads[i]] = {
       ..._.pick(file, [
         'createdAt',
@@ -79,13 +75,12 @@ const updateAnswer = {
       type: StringType,
     },
   },
-  resolve: ({ request }, args) =>
-    Model.transaction(async t => {
-      const answer = await Answer.findById(args.id);
-      if (!answer.canWrite(request.user)) throw new NoAccessError();
-      const body = await uploadFiles(request, answer, JSON.parse(args.body), t);
-      return answer.update({ body: JSON.stringify(body) }, { transaction: t });
-    }),
+  resolve: async ({ request }, args) => {
+    const answer = await Answer.findById(args.id);
+    if (!answer.canWrite(request.user)) throw new NoAccessError();
+    const body = await uploadFiles(request, answer, JSON.parse(args.body));
+    return answer.update({ body: JSON.stringify(body) });
+  },
 };
 
 const createAnswer = {
@@ -109,28 +104,23 @@ const createAnswer = {
       type: StringType,
     },
   },
-  resolve: ({ request }, args) =>
-    Model.transaction(async t => {
-      logger.info({
-        message: 'createAnswer',
-        body: args.body,
-        upload_order: _.get(request, 'body.upload_order'),
-      });
-      const answer = await Answer.create(
-        {
-          ...args,
-          userId: args.userId || request.user.id,
-        },
-        { transaction: t },
-      );
-      const body = await uploadFiles(
-        request,
-        answer,
-        JSON.parse(args.body || '{}'),
-        t,
-      );
-      return answer.update({ body: JSON.stringify(body) }, { transaction: t });
-    }),
+  resolve: async ({ request }, args) => {
+    logger.info({
+      message: 'createAnswer',
+      body: args.body,
+      upload_order: _.get(request, 'body.upload_order'),
+    });
+    const answer = await Answer.create({
+      ...args,
+      userId: args.userId || request.user.id,
+    });
+    const body = await uploadFiles(
+      request,
+      answer,
+      JSON.parse(args.body || '{}'),
+    );
+    return answer.update({ body: JSON.stringify(body) });
+  },
 };
 
 export { createAnswer, answers, updateAnswer };
