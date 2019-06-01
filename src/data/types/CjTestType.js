@@ -8,7 +8,7 @@ const CjTestType = new ObjectType({
   name: 'CjTestType',
   fields: () => ({
     id: { type: new NonNull(StringType) },
-    idcjtest: { type: new NonNull(StringType) },
+    idCj: { type: new NonNull(StringType) },
   }),
 });
 

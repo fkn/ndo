@@ -5,6 +5,39 @@ import {
 import fetch from 'node-fetch';
 import { NoAccessError, NotLoggedInError } from '../../errors';
 import CjResponseType from '../types/CjResponseType';
+import CjTest from '../models/CjTest';
+import CjTestType from '../types/CjTestType';
+
+const createCjTest = {
+  type: CjTestType,
+  args: {
+    input: {
+      description: 'Input data',
+      type: new NonNull(StringType),
+    },
+    output: {
+      description: 'Output data',
+      type: new NonNull(StringType),
+    },
+  },
+  resolve({ request }, { input, output }) {
+    const { user } = request;
+    if (!user) throw new NotLoggedInError();
+    if (!user.isAdmin) throw new NoAccessError();
+    return fetch('http://localhost:5000/tests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ input, output }),
+    })
+      .then(res => res.json())
+      .then(({ id }) =>
+        CjTest.create({
+          idCj: id,
+        }),
+      )
+      .catch(err => err);
+  },
+};
 
 const createCjSubmission = {
   type: CjResponseType,
@@ -24,31 +57,26 @@ const createCjSubmission = {
     if (!user.isAdmin) throw new NoAccessError();
     return fetch('http://localhost:5000/solutions', {
       method: 'POST',
-      body: { source, lang },
+      body: JSON.stringify({ source, lang }),
+      headers: { 'Content-Type': 'application/json' },
     }).then(res => res.json());
   },
 };
 
-const createCjTest = {
-  type: CjResponseType,
+const deleteCjTest = {
+  type: CjTestType,
   args: {
-    input: {
-      description: 'Input data',
-      type: new NonNull(StringType),
-    },
-    output: {
-      description: 'Output data',
+    id: {
+      description: 'Id of the test to delete',
       type: new NonNull(StringType),
     },
   },
-  async resolve({ request }, { input, output }) {
+  resolve({ request }, args) {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch('http://localhost:5000/tests', {
-      method: 'POST',
-      body: { input, output },
-    }).then(res => res.json());
+    const where = { id: args.id };
+    return CjTest.destroy({ where });
   },
 };
 
@@ -60,7 +88,7 @@ const createCjRun = {
       type: new NonNull(StringType),
     },
     solution: {
-      description: 'Id of the test',
+      description: 'Id of the solution',
       type: new NonNull(StringType),
     },
   },
@@ -68,12 +96,13 @@ const createCjRun = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch('http://localhost:5000/runs', {
-      method: 'POST',
-      params: { test, solution },
-    }).then(res => res.json());
+    return fetch(
+      `http://localhost:5000/runs?solution=${solution}&test=${test}`,
+      {
+        method: 'POST',
+      },
+    ).then(res => res.json());
   },
 };
 
-// eslint-disable-next-line import/prefer-default-export
-export { createCjSubmission, createCjRun, createCjTest };
+export { createCjSubmission, createCjRun, createCjTest, deleteCjTest };
