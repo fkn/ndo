@@ -7,7 +7,7 @@ import { NoAccessError, NotLoggedInError } from '../../errors';
 import CjTest from '../models/CjTest';
 import CjTestType from '../types/CjTestType';
 
-const createCjTest = {
+const createTestCj = {
   type: CjTestType,
   args: {
     idcjtest: {
@@ -25,11 +25,11 @@ const createCjTest = {
   },
 };
 
-const cjTests = {
+const testsCj = {
   type: new List(CjTestType),
   args: {
     ids: {
-      description: 'ids of the cjTests',
+      description: 'ids of the testsCj',
       type: new List(StringType),
     },
   },
@@ -42,4 +42,4 @@ const cjTests = {
   },
 };
 
-export { createCjTest, cjTests };
+export { createTestCj, testsCj };

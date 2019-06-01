@@ -29,5 +29,51 @@ const createCjSubmission = {
   },
 };
 
+const createCjTest = {
+  type: CjResponseType,
+  args: {
+    input: {
+      description: 'Input data',
+      type: new NonNull(StringType),
+    },
+    output: {
+      description: 'Output data',
+      type: new NonNull(StringType),
+    },
+  },
+  async resolve({ request }, { input, output }) {
+    const { user } = request;
+    if (!user) throw new NotLoggedInError();
+    if (!user.isAdmin) throw new NoAccessError();
+    return fetch('http://localhost:5000/tests', {
+      method: 'POST',
+      body: { input, output },
+    }).then(res => res.json());
+  },
+};
+
+const createCjRun = {
+  type: CjResponseType,
+  args: {
+    test: {
+      description: 'Id of the test',
+      type: new NonNull(StringType),
+    },
+    solution: {
+      description: 'Id of the test',
+      type: new NonNull(StringType),
+    },
+  },
+  async resolve({ request }, { test, solution }) {
+    const { user } = request;
+    if (!user) throw new NotLoggedInError();
+    if (!user.isAdmin) throw new NoAccessError();
+    return fetch('http://localhost:5000/runs', {
+      method: 'POST',
+      params: { test, solution },
+    }).then(res => res.json());
+  },
+};
+
 // eslint-disable-next-line import/prefer-default-export
-export { createCjSubmission };
+export { createCjSubmission, createCjRun, createCjTest };
