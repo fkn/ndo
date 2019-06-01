@@ -3,6 +3,7 @@ import vm from 'vm';
 import Model from '../sequelize';
 import Mark from './Mark';
 import * as util from './util';
+import buildCheckApi from './answer-check';
 
 const Answer = Model.define('answer', {
   id: {
@@ -37,7 +38,13 @@ class AnswerChecker {
       k => checker.schema[k].checker,
     );
     checker.fns = {};
-    checker.names.forEach(k => checker.build(k));
+    checker.weights = {};
+    checker.weightSum = 0;
+    checker.names.forEach(k => {
+      checker.build(k);
+      checker.weights[k] = +checker.schema[k].weight || 1;
+      checker.weightSum += checker.weights[k];
+    });
     return checker;
   }
 
@@ -46,12 +53,18 @@ class AnswerChecker {
    * @param {string} key fn key
    */
   build(key) {
-    this.fns[key] = (val, doc, schema) => {
+    this.fns[key] = async (val, doc, schema) => {
       let res = 0;
       try {
-        const sandbox = { val, key, doc, schema };
+        const sandbox = {
+          val,
+          key,
+          doc,
+          schema,
+          check: buildCheckApi(val, key, doc, schema),
+        };
         vm.createContext(sandbox);
-        res = vm.runInContext(this.schema[key].checker, sandbox);
+        res = await vm.runInContext(this.schema[key].checker, sandbox);
       } catch (e) {
         console.error(e);
       }
@@ -77,24 +90,27 @@ class AnswerChecker {
  * @param {string} answerStr answer in JSON
  * @param {string|object} schema represents unit schema
  */
-function autocheckAnswer(answerStr, schema) {
+async function autocheckAnswer(answerStr, schema) {
   if (!answerStr || !schema) return {};
   const answer = JSON.parse(answerStr);
   const checker = AnswerChecker.create(schema);
   const res = { mark: 0, comment: 'Marks:' };
   for (let i = 0; i < checker.names.length; i += 1) {
-    const m = checker.run(answer, checker.names[i]);
-    res.mark += (m || 0) / checker.names.length;
+    // eslint-disable-next-line no-await-in-loop
+    const m = await checker.run(answer, checker.names[i]);
+    res.mark +=
+      (checker.weights[checker.names[i]] * (m || 0)) / checker.weightSum;
     res.comment += ` ${m}`;
   }
+  res.mark = Math.max(Math.min(res.mark, 100), 0);
   return res;
 }
 
 async function afterUpdateAnswer(answer) {
   const unit = await answer.getUnit();
-  const mark = autocheckAnswer(answer.body, unit.schema);
+  const mark = await autocheckAnswer(answer.body, unit.schema);
   // TODO: use special authorId (or the user who added answer)
-  if (mark && mark.mark) {
+  if (mark && mark.comment) {
     Mark.create({
       mark: mark.mark,
       comment: mark.comment,
