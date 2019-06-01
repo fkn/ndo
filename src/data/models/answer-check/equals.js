@@ -1,11 +1,15 @@
 export default function(val) {
-  return valExp => {
-    let res;
-    if (valExp instanceof RegExp) res = valExp.test(val || '');
-    else if (typeof valExp === 'string')
-      res = (val || '').trim() === valExp.trim();
-    else if (typeof valExp === 'number') res = +val === valExp;
-    else if (typeof valExp === 'boolean') res = !!val === valExp;
-    return +res * 100;
+  return exps => {
+    if (!Array.isArray(exps)) exps = [exps];
+    return (
+      +exps.some(valExp => {
+        if (valExp instanceof RegExp) return valExp.test(val || '');
+        if (typeof valExp === 'string')
+          return (val || '').trim() === valExp.trim();
+        if (typeof valExp === 'number') return +val === valExp;
+        if (typeof valExp === 'boolean') return !!val === valExp;
+        return false;
+      }) * 100
+    );
   };
 }
