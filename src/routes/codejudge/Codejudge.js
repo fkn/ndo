@@ -1,6 +1,14 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import {
+  Col,
+  ListGroup,
+  ListGroupItem,
+  Row,
+  Form,
+  ControlLabel,
+  Button,
+} from 'react-bootstrap';
 import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { showModal } from '../../actions/modals';
@@ -8,6 +16,7 @@ import IconButton from '../../components/IconButton/IconButton';
 import Modal from '../../components/Modal/Modal';
 import ModalProblemEdit from '../../components/ModalProblemEdit/ModalProblemEdit';
 import deleteCjTestMutation from '../../gql/deleteCjTest.gql';
+import createCjTestMutation from '../../gql/createCjTest.gql';
 import s from './Codejudge.css';
 
 class Codejudge extends Component {
@@ -37,6 +46,32 @@ class Codejudge extends Component {
     problems: [],
   };
 
+  state = {
+    input: '',
+    output: '',
+  };
+
+  onTextareaChange = event =>
+    this.setState({ [event.target.name]: event.target.value });
+
+  createCjTest = async event => {
+    const { input, output } = this.state;
+    event.preventDefault();
+    try {
+      await this.context.fetch('/graphql', {
+        body: JSON.stringify({
+          query: createCjTestMutation,
+          variables: {
+            input,
+            output,
+          },
+        }),
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+
   deleteCjTest = async id => {
     try {
       await this.context.fetch('/graphql', {
@@ -53,6 +88,7 @@ class Codejudge extends Component {
   };
 
   render() {
+    const { input, output } = this.state;
     const { userId, dispatch, problems, modals } = this.props;
 
     return (
@@ -76,6 +112,37 @@ class Codejudge extends Component {
               {modals.problemModal_data && (
                 <Fragment>
                   <h2>{modals.problemModal_data.title}</h2>
+                  <div className="container">
+                    <Form>
+                      <Row>
+                        <ControlLabel>Input </ControlLabel>
+                        <Col>
+                          <textarea
+                            placeholder="Enter input values"
+                            value={input}
+                            name="input"
+                            onChange={this.onTextareaChange}
+                          />
+                        </Col>
+                        <ControlLabel>Output</ControlLabel>
+                        <Col>
+                          <textarea
+                            placeholder="Enter expected output"
+                            value={output}
+                            name="output"
+                            onChange={this.onTextareaChange}
+                          />
+                        </Col>
+                        <Button
+                          variant="primary"
+                          type="submit"
+                          onClick={this.createCjTest}
+                        >
+                          Add test
+                        </Button>
+                      </Row>
+                    </Form>
+                  </div>
                   <ListGroup>
                     {modals.problemModal_data.tests.map(({ idCj, id }) => (
                       <Row key={id}>
