@@ -10,6 +10,9 @@ module.exports = {
         type: Sequelize.STRING(255),
         allowNull: false,
       },
+      problemId: {
+        type: Sequelize.STRING(255),
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
