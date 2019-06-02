@@ -1,12 +1,13 @@
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
-import { ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { showModal } from '../../actions/modals';
 import IconButton from '../../components/IconButton/IconButton';
 import Modal from '../../components/Modal/Modal';
 import ModalProblemEdit from '../../components/ModalProblemEdit/ModalProblemEdit';
+import deleteCjTestMutation from '../../gql/deleteCjTest.gql';
 import s from './Codejudge.css';
 
 class Codejudge extends Component {
@@ -19,13 +20,36 @@ class Codejudge extends Component {
       PropTypes.shape({
         id: PropTypes.string.isRequired,
         title: PropTypes.string.isRequired,
+        tests: PropTypes.arrayOf(
+          PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            idCj: PropTypes.string.isRequired,
+          }),
+        ),
       }),
     ),
   };
 
+  static contextTypes = { fetch: PropTypes.func.isRequired };
+
   static defaultProps = {
     userId: null,
     problems: [],
+  };
+
+  deleteCjTest = async id => {
+    try {
+      await this.context.fetch('/graphql', {
+        body: JSON.stringify({
+          query: deleteCjTestMutation,
+          variables: {
+            id,
+          },
+        }),
+      });
+    } catch (error) {
+      throw error;
+    }
   };
 
   render() {
@@ -53,8 +77,18 @@ class Codejudge extends Component {
                 <Fragment>
                   <h2>{modals.problemModal_data.title}</h2>
                   <ListGroup>
-                    {modals.problemModal_data.tests.map(({ idcjtest, id }) => (
-                      <ListGroupItem key={id}>{idcjtest}</ListGroupItem>
+                    {modals.problemModal_data.tests.map(({ idCj, id }) => (
+                      <Row key={id}>
+                        <Col md={8}>
+                          <ListGroupItem>{idCj}</ListGroupItem>
+                        </Col>
+                        <Col>
+                          <IconButton
+                            onClick={() => this.deleteCjTest(id)}
+                            glyph="trash"
+                          />
+                        </Col>
+                      </Row>
                     ))}
                   </ListGroup>
                 </Fragment>
