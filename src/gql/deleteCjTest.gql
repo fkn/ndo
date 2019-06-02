@@ -1,0 +1,5 @@
+mutation deleteCjTest($id: String!) {
+  deleteCjTest(id: $id) {
+    id
+  }
+}
