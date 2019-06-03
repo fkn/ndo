@@ -22,9 +22,9 @@ async function action({ fetch, store }, { idCourse, idUnit }) {
     }),
   });
   const { data } = await resp.json();
-  if (!data && !data.courses.length && !data.units.length)
+  if (!data && !data.courses.length && !data.courses[0].units.length)
     throw new Error('Failed to load unit.');
-  store.dispatch(setUnit(data.units[0]));
+  store.dispatch(setUnit(data.courses[0].units[0]));
   return {
     chunks: ['unit'],
     title,

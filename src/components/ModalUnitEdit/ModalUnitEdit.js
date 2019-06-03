@@ -80,7 +80,7 @@ class ModalUnitEdit extends React.Component {
       body = unit.body,
       schema = unit.schema || '',
       tab = 'unit',
-      weight = 1,
+      weight = unit.weight || 1,
       answerable = unit.answerable,
     } = this.state;
     return (

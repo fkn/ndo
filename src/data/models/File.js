@@ -3,6 +3,7 @@ import path from 'path';
 import mkdirp from 'mkdirp';
 import fileUrl from 'file-url';
 import DataType from 'sequelize';
+import { promisify } from 'util';
 import Model from '../sequelize';
 import * as util from './util';
 
@@ -36,6 +37,12 @@ File.prototype.canRead = async function canRead(user) {
 
 File.prototype.canWrite = function canWrite(user) {
   return util.haveAccess(user, this.userId);
+};
+
+File.prototype.text = async function text() {
+  const url = new URL(this.url);
+  const data = await promisify(fs.readFile)(url);
+  return String(data);
 };
 
 const FILES_DIR = path.join(__dirname, './files');
@@ -73,35 +80,24 @@ const storeToFn = {
 
 File.uploadFile = async (
   { buffer, internalName, userId, parentType, parentId, key },
-  { store = 'fs', transaction, disableTransaction } = {},
+  { store = 'fs' } = {},
 ) => {
-  // TODO: find out why transaction doensn't work for uploadFile into Unit
-  // and rm disableTransaction
-  const t = !disableTransaction && (transaction || (await Model.transaction()));
   try {
-    const file = await File.create(
-      {
-        internalName,
-        userId,
-      },
-      { transaction: t },
-    );
+    const file = await File.create({
+      internalName,
+      userId,
+    });
     if (!storeToFn[store])
       throw new Error(`store '${store}' is not implemented yet`);
     if (parentType) {
-      const parent = await file.createParent(
-        { parentType, parentId, key },
-        { transaction: t },
-      );
-      await file.addParent(parent, { transaction: t });
+      const parent = await file.createParent({ parentType, parentId, key });
+      await file.addParent(parent);
     }
     file.url = await storeToFn[store](file, buffer);
-    file.save({ transaction: t });
-    if (!transaction && t) await t.commit();
+    file.save();
     return file;
   } catch (err) {
     console.error(err);
-    if (!transaction && t) await t.rollback();
     throw err;
   }
 };

@@ -43,17 +43,14 @@ const uploadFile = {
   },
   resolve({ request }, args) {
     if (!request.user) throw new NotLoggedInError();
-    return File.uploadFile(
-      {
-        internalName: request.files[0].originalname,
-        userId: request.user.id,
-        buffer: request.files[0].buffer,
-        parentType: args.parentType,
-        parentId: args.parentId,
-        key: args.key,
-      },
-      { disableTransaction: true },
-    );
+    return File.uploadFile({
+      internalName: request.files[0].originalname,
+      userId: request.user.id,
+      buffer: request.files[0].buffer,
+      parentType: args.parentType,
+      parentId: args.parentId,
+      key: args.key,
+    });
   },
 };
 
