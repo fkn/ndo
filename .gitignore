@@ -5,7 +5,10 @@ node_modules/
 
 # Compiled output
 build
+
+# Runtime files
 ndodb-data
+runtime
 
 # Test coverage
 coverage

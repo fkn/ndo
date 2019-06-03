@@ -28,7 +28,7 @@ const createCjTest = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch('http://localhost:5000/tests', {
+    return fetch('http://master:3000/tests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ input, output }),
@@ -60,7 +60,7 @@ const createCjSubmission = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch('http://localhost:5000/solutions', {
+    return fetch('http://master:3000/solutions', {
       method: 'POST',
       body: JSON.stringify({ source, lang }),
       headers: { 'Content-Type': 'application/json' },
@@ -101,12 +101,9 @@ const createCjRun = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch(
-      `http://localhost:5000/runs?solution=${solution}&test=${test}`,
-      {
-        method: 'POST',
-      },
-    ).then(res => res.json());
+    return fetch(`http://master:3000/runs?solution=${solution}&test=${test}`, {
+      method: 'POST',
+    }).then(res => res.json());
   },
 };
 
