@@ -54,9 +54,8 @@ class Codejudge extends Component {
   onTextareaChange = event =>
     this.setState({ [event.target.name]: event.target.value });
 
-  createCjTest = async event => {
+  createCjTest = async problemId => {
     const { input, output } = this.state;
-    event.preventDefault();
     try {
       await this.context.fetch('/graphql', {
         body: JSON.stringify({
@@ -64,6 +63,7 @@ class Codejudge extends Component {
           variables: {
             input,
             output,
+            problemId,
           },
         }),
       });
@@ -135,8 +135,10 @@ class Codejudge extends Component {
                         </Col>
                         <Button
                           variant="primary"
-                          type="submit"
-                          onClick={this.createCjTest}
+                          type="button"
+                          onClick={() =>
+                            this.createCjTest(modals.problemModal_data.id)
+                          }
                         >
                           Add test
                         </Button>

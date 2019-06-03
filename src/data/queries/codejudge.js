@@ -19,8 +19,12 @@ const createCjTest = {
       description: 'Output data',
       type: new NonNull(StringType),
     },
+    problemId: {
+      description: 'Id of the problem',
+      type: new NonNull(StringType),
+    },
   },
-  resolve({ request }, { input, output }) {
+  resolve({ request }, { input, output, problemId }) {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
@@ -33,6 +37,7 @@ const createCjTest = {
       .then(({ id }) =>
         CjTest.create({
           idCj: id,
+          problemId,
         }),
       )
       .catch(err => err);

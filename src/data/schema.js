@@ -18,7 +18,6 @@ import {
   problems,
   updateProblem,
 } from './queries/cjproblem';
-import { testsCj } from './queries/cjtest';
 import {
   createCjSubmission,
   createCjRun,
@@ -61,7 +60,6 @@ const schema = new Schema({
       courses,
       units,
       answers,
-      testsCj,
       problems,
       marks,
       groups,
