@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import {
   ControlLabel,
-  Form,
   FormControl,
   FormGroup,
   HelpBlock,
@@ -57,19 +56,17 @@ class ModalProblemEdit extends Component {
     return (
       <Modal {...rest} onSubmit={this.handleSubmit}>
         <Modal.Body>
-          <Form>
-            <FormGroup controlId="title">
-              <ControlLabel>Title</ControlLabel>
-              <FormControl
-                autoFocus
-                type="text"
-                name="title"
-                value={title}
-                onChange={this.handleChange}
-              />
-              <HelpBlock>Title can not be empty</HelpBlock>
-            </FormGroup>
-          </Form>
+          <FormGroup controlId="title">
+            <ControlLabel>Title</ControlLabel>
+            <FormControl
+              autoFocus
+              type="text"
+              name="title"
+              value={title}
+              onChange={this.handleChange}
+            />
+            <HelpBlock>Title can not be empty</HelpBlock>
+          </FormGroup>
         </Modal.Body>
       </Modal>
     );
