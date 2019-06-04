@@ -20,6 +20,10 @@ function getDatabaseUrl() {
   return process.env.DATABASE_URL || 'sqlite:database.sqlite';
 }
 
+function getCodejudgeUrl() {
+  return process.env.CODEJUDGE_URL || 'http://master:3000/';
+}
+
 module.exports = {
   // Node.js app
   port: process.env.PORT || 3000,
@@ -39,6 +43,8 @@ module.exports = {
 
   // Database
   databaseUrl: getDatabaseUrl(),
+
+  codejudgeUrl: getCodejudgeUrl(),
 
   // Web analytics
   analytics: {

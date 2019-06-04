@@ -12,6 +12,7 @@ const CjTest = Model.define('cjtest', {
     type: DataType.STRING(255),
     allowNull: false,
   },
+  // TODO: add order field here
 });
 
 CjTest.prototype.canRead = function canRead(user) {

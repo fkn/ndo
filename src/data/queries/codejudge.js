@@ -7,6 +7,7 @@ import { NoAccessError, NotLoggedInError } from '../../errors';
 import CjResponseType from '../types/CjResponseType';
 import CjTest from '../models/CjTest';
 import CjTestType from '../types/CjTestType';
+import config from '../../config';
 
 const createCjTest = {
   type: CjTestType,
@@ -28,7 +29,7 @@ const createCjTest = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch('http://master:3000/tests', {
+    return fetch(`${config.codejudgeUrl}tests`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ input, output }),
@@ -60,7 +61,7 @@ const createCjSubmission = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch('http://master:3000/solutions', {
+    return fetch(`${config.codejudgeUrl}solutions`, {
       method: 'POST',
       body: JSON.stringify({ source, lang }),
       headers: { 'Content-Type': 'application/json' },
@@ -101,9 +102,12 @@ const createCjRun = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch(`http://master:3000/runs?solution=${solution}&test=${test}`, {
-      method: 'POST',
-    }).then(res => res.json());
+    return fetch(
+      `${config.codejudgeUrl}runs?solution=${solution}&test=${test}`,
+      {
+        method: 'POST',
+      },
+    ).then(res => res.json());
   },
 };
 
