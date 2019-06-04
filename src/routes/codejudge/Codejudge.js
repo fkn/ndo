@@ -5,8 +5,9 @@ import {
   ListGroup,
   ListGroupItem,
   Row,
-  Form,
+  FormGroup,
   ControlLabel,
+  FormControl,
   Button,
 } from 'react-bootstrap';
 import { connect } from 'react-redux';
@@ -112,39 +113,37 @@ class Codejudge extends Component {
               {modals.problemModal_data && (
                 <Fragment>
                   <h2>{modals.problemModal_data.title}</h2>
-                  <div className="container">
-                    <Form>
-                      <Row>
-                        <ControlLabel>Input </ControlLabel>
-                        <Col>
-                          <textarea
-                            placeholder="Enter input values"
-                            value={input}
-                            name="input"
-                            onChange={this.onTextareaChange}
-                          />
-                        </Col>
-                        <ControlLabel>Output</ControlLabel>
-                        <Col>
-                          <textarea
-                            placeholder="Enter expected output"
-                            value={output}
-                            name="output"
-                            onChange={this.onTextareaChange}
-                          />
-                        </Col>
-                        <Button
-                          variant="primary"
-                          type="button"
-                          onClick={() =>
-                            this.createCjTest(modals.problemModal_data.id)
-                          }
-                        >
-                          Add test
-                        </Button>
-                      </Row>
-                    </Form>
-                  </div>
+                  <FormGroup>
+                    <ControlLabel>Input</ControlLabel>
+                    <FormControl
+                      componentClass="textarea"
+                      placeholder="Enter input values"
+                      value={input}
+                      name="input"
+                      onChange={this.onTextareaChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <ControlLabel>Output</ControlLabel>
+                    <FormControl
+                      componentClass="textarea"
+                      placeholder="Enter expected output"
+                      value={output}
+                      name="output"
+                      onChange={this.onTextareaChange}
+                    />
+                  </FormGroup>
+                  <FormGroup>
+                    <Button
+                      variant="primary"
+                      type="button"
+                      onClick={() =>
+                        this.createCjTest(modals.problemModal_data.id)
+                      }
+                    >
+                      Add test
+                    </Button>
+                  </FormGroup>
                   <ListGroup>
                     {modals.problemModal_data.tests.map(({ idCj, id }) => (
                       <Row key={id}>
