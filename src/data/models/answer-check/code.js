@@ -11,11 +11,11 @@ async function getSourceFromFile(id) {
 
 const pause = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-async function solution(data, method) {
+async function submission(data, method) {
   try {
     const url =
       config.codejudgeUrl +
-      (method === 'GET' ? `solutions/${data.id}` : `solutions`);
+      (method === 'GET' ? `submissions/${data.id}` : `submissions`);
     const res = await fetch(url, {
       method,
       body: method === 'GET' ? undefined : JSON.stringify(data),
@@ -34,7 +34,7 @@ async function run(data, method) {
       config.codejudgeUrl +
       (method === 'GET'
         ? `runs/${data.id}`
-        : `runs?solution=${data.solution}&test=${data.test}`);
+        : `runs?submission=${data.submission}&test=${data.test}`);
     const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
@@ -46,7 +46,7 @@ async function run(data, method) {
   }
 }
 
-// TODO: fix in CJ so first POST /runs returns queue (similar to POST /solutions)
+// TODO: fix in CJ so first POST /runs returns queue (similar to POST /submissions)
 async function awaitWrapper(fn, data, { firstOk = false } = {}) {
   let res = await fn(data, 'POST');
   let cnt = 0;
@@ -73,7 +73,7 @@ export default function(val) {
     const source =
       val.type === 'file' ? await getSourceFromFile(val.id) : String(val);
 
-    const sol = await awaitWrapper(solution, { lang: 'java', source });
+    const sol = await awaitWrapper(submission, { lang: 'java', source });
 
     let res = 0;
 
@@ -81,7 +81,7 @@ export default function(val) {
       const tr = await awaitWrapper(
         run,
         {
-          solution: sol.id,
+          submission: sol.id,
           test: tests[i].idCj,
         },
         { firstOk: true },

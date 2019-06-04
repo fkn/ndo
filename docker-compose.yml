@@ -36,7 +36,7 @@ services:
     volumes:
       - ./runtime/runs:/usr/src/app/runs
       - ./runtime/tests:/usr/src/app/tests
-      - ./runtime/solutions:/usr/src/app/solutions
+      - ./runtime/submissions:/usr/src/app/submissions
       - ./runtime/tasks:/usr/src/app/tasks
   slave:
     build:
@@ -46,5 +46,5 @@ services:
     volumes:
       - ./runtime/runs:/arch/slave/runs
       - ./runtime/tests:/arch/slave/tests
-      - ./runtime/solutions:/arch/slave/solutions
+      - ./runtime/submissions:/arch/slave/submissions
       - ./runtime/tasks:/arch/slave/tasks

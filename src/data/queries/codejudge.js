@@ -61,7 +61,7 @@ const createCjSubmission = {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
-    return fetch(`${config.codejudgeUrl}solutions`, {
+    return fetch(`${config.codejudgeUrl}submissions`, {
       method: 'POST',
       body: JSON.stringify({ source, lang }),
       headers: { 'Content-Type': 'application/json' },
@@ -93,17 +93,17 @@ const createCjRun = {
       description: 'Id of the test',
       type: new NonNull(StringType),
     },
-    solution: {
-      description: 'Id of the solution',
+    submission: {
+      description: 'Id of the submission',
       type: new NonNull(StringType),
     },
   },
-  async resolve({ request }, { test, solution }) {
+  async resolve({ request }, { test, submission }) {
     const { user } = request;
     if (!user) throw new NotLoggedInError();
     if (!user.isAdmin) throw new NoAccessError();
     return fetch(
-      `${config.codejudgeUrl}runs?solution=${solution}&test=${test}`,
+      `${config.codejudgeUrl}runs?submission=${submission}&test=${test}`,
       {
         method: 'POST',
       },
