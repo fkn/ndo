@@ -82,79 +82,77 @@ class MarksTable extends Component {
     return (
       <Fragment>
         <h3>Marks list</h3>
-        <form>
-          <Table striped bordered responsive hover>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Mark</th>
-                <th>Comment</th>
-                <th>Date</th>
-                <th>By</th>
+        <Table striped bordered responsive hover>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Mark</th>
+              <th>Comment</th>
+              <th>Date</th>
+              <th>By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {marks.map((m, index) => (
+              <tr key={m.id}>
+                <td>{index + 1}</td>
+                <td>{m.mark.toFixed(2)}</td>
+                <td className={s.commentColumn}>{parse(m.comment)}</td>
+                <td title={moment(m.createdAt).format('llll')}>
+                  {moment(m.createdAt).fromNow()}
+                </td>
+                <td>
+                  <User user={m.author} />
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {marks.map((m, index) => (
-                <tr key={m.id}>
-                  <td>{index + 1}</td>
-                  <td>{m.mark.toFixed(2)}</td>
-                  <td>{parse(m.comment)}</td>
-                  <td title={moment(m.createdAt).format('llll')}>
-                    {moment(m.createdAt).fromNow()}
-                  </td>
-                  <td>
-                    <User user={m.author} />
-                  </td>
-                </tr>
-              ))}
-              {!marks.length && (
-                <tr>
-                  <td colSpan="5">
-                    <span>No marks yet</span>
-                  </td>
-                </tr>
-              )}
-              {(user.isAdmin || role === 'teacher') && (
-                <tr>
-                  <td />
-                  <td className={s.markColumn}>
-                    <FormGroup
-                      bsClass="mb-0"
-                      controlId="mark"
-                      validationState={this.getValidationState()}
-                    >
-                      <FormControl
-                        type="number"
-                        width="100px"
-                        min="0"
-                        max="100"
-                        step="10"
-                        placeholder="Mark from 0 to 100"
-                        value={mark}
-                        onChange={this.handleChange('mark')}
-                      />
-                      <FormControl.Feedback />
-                    </FormGroup>
-                  </td>
-                  <td colSpan="2">
-                    <TextEditor
-                      value={comment}
-                      mode="markdown"
-                      onChange={val => this.setState({ comment: val })}
+            ))}
+            {!marks.length && (
+              <tr>
+                <td colSpan="5">
+                  <span>No marks yet</span>
+                </td>
+              </tr>
+            )}
+            {(user.isAdmin || role === 'teacher') && (
+              <tr>
+                <td />
+                <td className={s.markColumn}>
+                  <FormGroup
+                    bsClass="mb-0"
+                    controlId="mark"
+                    validationState={this.getValidationState()}
+                  >
+                    <FormControl
+                      type="number"
+                      width="100px"
+                      min="0"
+                      max="100"
+                      step="10"
+                      placeholder="Mark from 0 to 100"
+                      value={mark}
+                      onChange={this.handleChange('mark')}
                     />
-                  </td>
-                  <td>
-                    <IconButton
-                      disabled={this.getValidationState() === 'error'}
-                      onClick={this.handleSubmit}
-                      glyph="ok"
-                    />
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-        </form>
+                    <FormControl.Feedback />
+                  </FormGroup>
+                </td>
+                <td colSpan="2">
+                  <TextEditor
+                    value={comment}
+                    mode="markdown"
+                    onChange={val => this.setState({ comment: val })}
+                  />
+                </td>
+                <td>
+                  <IconButton
+                    disabled={this.getValidationState() === 'error'}
+                    onClick={this.handleSubmit}
+                    glyph="ok"
+                  />
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </Table>
       </Fragment>
     );
   }

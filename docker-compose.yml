@@ -44,7 +44,7 @@ services:
       dockerfile: ./slave/Dockerfile
     privileged: true
     volumes:
-      - ./runtime/runs:/arch/slave/runs
-      - ./runtime/tests:/arch/slave/tests
-      - ./runtime/submissions:/arch/slave/submissions
-      - ./runtime/tasks:/arch/slave/tasks
+      - ./runtime/runs:/usr/src/app/runs
+      - ./runtime/tests:/usr/src/app/tests
+      - ./runtime/submissions:/usr/src/app/submissions
+      - ./runtime/tasks:/usr/src/app/tasks

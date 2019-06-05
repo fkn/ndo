@@ -46,18 +46,12 @@ async function run(data, method) {
   }
 }
 
-// TODO: fix in CJ so first POST /runs returns queue (similar to POST /submissions)
-async function awaitWrapper(fn, data, { firstOk = false } = {}) {
+async function awaitWrapper(fn, data) {
   let res = await fn(data, 'POST');
-  let cnt = 0;
-  while (
-    res &&
-    (res.status === 'queue' || (firstOk && !cnt && res.status === 'ok'))
-  ) {
-    await pause(5000);
+  while (res && ['processing', 'queue'].includes(res.status)) {
+    await pause(1000);
     // TODO: fix in CJ that res always have id when available (sometime it's saved in res.data.id)
     res = await fn(res.data ? res.data : res, 'GET');
-    cnt += 1;
   }
   return res.data ? res.data : res;
 }
@@ -75,22 +69,33 @@ export default function(val) {
 
     const sol = await awaitWrapper(submission, { lang: 'java', source });
 
-    let res = 0;
+    if (sol.status === 'error') {
+      return {
+        mark: 0,
+        comment: `<div>Compilatioon error:</div><pre>${sol.error}</pre>`,
+      };
+    }
+
+    let mark = 0;
+    let comment = '<div>Tests:</div><ol>';
 
     for (let i = 0; i < tests.length; i += 1) {
-      const tr = await awaitWrapper(
-        run,
-        {
-          submission: sol.id,
-          test: tests[i].idCj,
-        },
-        { firstOk: true },
-      );
-      if (tr && tr.status === 'ok') {
-        res += 100 / tests.length;
+      const tr = await awaitWrapper(run, {
+        submission: sol.id,
+        test: tests[i].idCj,
+      });
+      if (tr && tr.status === 'ok' && tr.checkResult) {
+        mark += 100 / tests.length;
+        comment += '<li>ok</li>';
+      } else if (tr && tr.status === 'ok') {
+        comment += '<li>wrong answer</li>';
+      } else if (tr && tr.status === 'error') {
+        comment += `<li>Runtime error:<pre>${tr.error}</pre></li>`;
       }
     }
 
-    return res;
+    comment += '</ol>';
+
+    return { mark, comment };
   };
 }
