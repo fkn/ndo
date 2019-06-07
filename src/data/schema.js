@@ -8,36 +8,47 @@
  */
 
 import {
-  GraphQLSchema as Schema,
   GraphQLObjectType as ObjectType,
+  GraphQLSchema as Schema,
 } from 'graphql';
-
+import { answers, createAnswer, updateAnswer } from './queries/answer';
+import {
+  addTestToProblem,
+  createProblem,
+  problems,
+  updateProblem,
+} from './queries/cjproblem';
+import {
+  createCjSubmission,
+  createCjRun,
+  createCjTest,
+  deleteCjTest,
+} from './queries/codejudge';
+import {
+  addUserToCourse,
+  courses,
+  createCourse,
+  deleteUserFromCourse,
+  updateCourse,
+} from './queries/course';
+import { files, uploadFile } from './queries/file';
+import {
+  addUserToGroup,
+  createGroup,
+  deleteUserFromGroup,
+  groups,
+  updateGroup,
+} from './queries/group';
+import { createMark, marks, updateMark } from './queries/mark';
 import me from './queries/me';
+import { createUnit, removeUnit, units, updateUnit } from './queries/unit';
 import {
   createUser,
   removeUser,
+  setPassword,
   updateUser,
   users,
-  setPassword,
 } from './queries/user';
-import { files, uploadFile } from './queries/file';
-import {
-  createGroup,
-  updateGroup,
-  addUserToGroup,
-  deleteUserFromGroup,
-  groups,
-} from './queries/group';
-import {
-  createCourse,
-  courses,
-  updateCourse,
-  addUserToCourse,
-  deleteUserFromCourse,
-} from './queries/course';
-import { createUnit, removeUnit, units, updateUnit } from './queries/unit';
-import { createAnswer, answers, updateAnswer } from './queries/answer';
-import { createMark, marks, updateMark } from './queries/mark';
 
 const schema = new Schema({
   query: new ObjectType({
@@ -49,6 +60,7 @@ const schema = new Schema({
       courses,
       units,
       answers,
+      problems,
       marks,
       groups,
     },
@@ -56,13 +68,20 @@ const schema = new Schema({
   mutation: new ObjectType({
     name: 'Mutation',
     fields: {
+      createCjTest,
+      createCjSubmission,
+      createCjRun,
       createCourse,
+      deleteCjTest,
       createAnswer,
+      addTestToProblem,
+      createProblem,
       createUnit,
       createGroup,
       createUser,
       createMark,
       updateCourse,
+      updateProblem,
       updateUnit,
       updateUser,
       updateMark,

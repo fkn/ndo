@@ -25,3 +25,26 @@ services:
       - POSTGRES_USER=ndo
       - POSTGRES_PASSWORD=ndo
       - POSTGRES_DB=ndodb
+  master:
+    build:
+      context: ./cj
+      dockerfile: ./master/Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3001:3000
+    volumes:
+      - ./runtime/runs:/usr/src/app/runs
+      - ./runtime/tests:/usr/src/app/tests
+      - ./runtime/submissions:/usr/src/app/submissions
+      - ./runtime/tasks:/usr/src/app/tasks
+  slave:
+    build:
+      context: ./cj
+      dockerfile: ./slave/Dockerfile
+    privileged: true
+    volumes:
+      - ./runtime/runs:/usr/src/app/runs
+      - ./runtime/tests:/usr/src/app/tests
+      - ./runtime/submissions:/usr/src/app/submissions
+      - ./runtime/tasks:/usr/src/app/tasks

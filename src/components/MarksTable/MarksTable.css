@@ -1,3 +1,7 @@
 .markColumn input {
   min-width: 98px;
 }
+
+.commentColumn pre {
+  max-width: 500px;
+}

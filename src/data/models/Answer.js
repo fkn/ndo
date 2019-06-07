@@ -48,6 +48,10 @@ class AnswerChecker {
     return checker;
   }
 
+  mark(key, m) {
+    return (this.weights[key] * (m || 0)) / this.weightSum;
+  }
+
   /**
    * Any preprocessing related to checker function for key
    * @param {string} key fn key
@@ -68,7 +72,16 @@ class AnswerChecker {
       } catch (e) {
         console.error(e);
       }
-      return Math.min(Math.max(+res || 0, 0), 100);
+      let mark = 0;
+      let comment = '';
+      if (typeof res === 'object') {
+        mark = res.mark;
+        comment = res.comment;
+      } else mark = res;
+      return {
+        mark: Math.min(Math.max(+mark || 0, 0), 100),
+        comment: String(comment),
+      };
     };
   }
 
@@ -94,16 +107,20 @@ async function autocheckAnswer(answerStr, schema) {
   if (!answerStr || !schema) return {};
   const answer = JSON.parse(answerStr);
   const checker = AnswerChecker.create(schema);
-  const res = { mark: 0, comment: 'Marks:' };
+  let mark = 0;
+  let comment = '<p>Autocheck summary:</p><ul>';
   for (let i = 0; i < checker.names.length; i += 1) {
+    const key = checker.names[i];
     // eslint-disable-next-line no-await-in-loop
-    const m = await checker.run(answer, checker.names[i]);
-    res.mark +=
-      (checker.weights[checker.names[i]] * (m || 0)) / checker.weightSum;
-    res.comment += ` ${m}`;
+    const res = await checker.run(answer, key);
+    const m = checker.mark(key, res.mark);
+    mark += m;
+    const frac = `${m.toFixed(1)}/${checker.mark(key, 100).toFixed(1)}`;
+    comment += `<li>${key}: ${frac}${res.comment || ''}</li>`;
   }
-  res.mark = Math.max(Math.min(res.mark, 100), 0);
-  return res;
+  comment += '</ul>';
+  mark = Math.max(Math.min(mark, 100), 0);
+  return { mark, comment };
 }
 
 async function afterUpdateAnswer(answer) {

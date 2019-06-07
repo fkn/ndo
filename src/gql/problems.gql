@@ -1,0 +1,10 @@
+query problems($ids: [String]) {
+  problems(ids: $ids) {
+    id
+    title
+    tests {
+      id
+      idCj
+    }
+  }
+}

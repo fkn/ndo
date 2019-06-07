@@ -1,0 +1,5 @@
+mutation createCjTest($input: String!, $output: String!, $problemId: String!) {
+  createCjTest(input: $input, output: $output, problemId: $problemId) {
+    id
+  }
+}

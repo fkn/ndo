@@ -1,6 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
-import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import React from 'react';
+import { Nav, Navbar, NavItem } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import Link from '../Link';
 
@@ -60,6 +60,17 @@ function Navigation({ user }) {
                 href="/tests"
               >
                 Tests
+              </NavItem>
+            )}
+          {user &&
+            user.isAdmin && (
+              <NavItem
+                componentClass={Link}
+                eventKey={5}
+                to="/codejudge"
+                href="/codejudge"
+              >
+                Codejudge
               </NavItem>
             )}
         </Nav>
