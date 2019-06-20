@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
@@ -34,18 +34,19 @@ class Users extends React.Component {
     const { dispatch } = this.context.store;
     return (
       <div className={s.root}>
-        <ModalGroupEdit modalId="modalGroupAdd" edit={false} />
-        <ModalGroupEdit modalId="modalGroupEdit" />
         <div className={s.container}>
           <Row>
             <Col md={4}>
               <h1>
                 Groups{' '}
                 {user.isAdmin && (
-                  <IconButton
-                    onClick={() => dispatch(showModal('modalGroupAdd'))}
-                    glyph="plus"
-                  />
+                  <Fragment>
+                    <IconButton
+                      onClick={() => dispatch(showModal('modalGroupAdd'))}
+                      glyph="plus"
+                    />
+                    <ModalGroupEdit modalId="modalGroupAdd" edit={false} />
+                  </Fragment>
                 )}
               </h1>
               <ol>
@@ -53,13 +54,16 @@ class Users extends React.Component {
                   <li key={group.id}>
                     {group.title}
                     {user.isAdmin && (
-                      <IconButton
-                        onClick={() => {
-                          dispatch(setGroup(group));
-                          dispatch(showModal('modalGroupEdit'));
-                        }}
-                        glyph="pencil"
-                      />
+                      <Fragment>
+                        <IconButton
+                          onClick={() => {
+                            dispatch(setGroup(group));
+                            dispatch(showModal('modalGroupEdit'));
+                          }}
+                          glyph="pencil"
+                        />
+                        <ModalGroupEdit modalId="modalGroupEdit" />
+                      </Fragment>
                     )}
                   </li>
                 ))}

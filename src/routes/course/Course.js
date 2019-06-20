@@ -15,25 +15,28 @@ function Course({ user, course, dispatch }) {
   const role = getRole(course, user);
   return (
     <div className={s.root}>
-      <ModalCourseEdit modalId="modalCourseEdit" />
-      <ModalUnitEdit modalId="modalUnitAdd" edit={false} />
       <div className={s.container}>
         <h1>
           {title}
-          <Fragment>
-            {(user || {}).isAdmin && (
+          {user.isAdmin && (
+            <Fragment>
               <IconButton
                 onClick={() => dispatch(showModal('modalCourseEdit'))}
                 glyph="pencil"
               />
-            )}
-            {role === 'teacher' && (
+              <ModalCourseEdit modalId="modalCourseEdit" />
+            </Fragment>
+          )}
+
+          {role === 'teacher' && (
+            <Fragment>
               <IconButton
                 onClick={() => dispatch(showModal('modalUnitAdd'))}
                 glyph="plus"
               />
-            )}
-          </Fragment>
+              <ModalUnitEdit modalId="modalUnitAdd" edit={false} />
+            </Fragment>
+          )}
         </h1>
         <UnitsList units={units} courseId={id} role={role} schema={schema} />
       </div>
@@ -67,7 +70,7 @@ Course.contextTypes = {
 
 const mapStateToProps = state => ({
   course: state.course,
-  user: state.user,
+  user: state.user || {},
 });
 
 export default connect(mapStateToProps)(withStyles(s)(Course));

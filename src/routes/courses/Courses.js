@@ -46,15 +46,17 @@ class Courses extends React.Component {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <ModalCourseEdit modalId="modalAddCourse" edit={false} />
           <h1>
             {title}
             {userId && (
               // eslint-disable-next-line react/prop-types
-              <IconButton
-                onClick={() => dispatch(showModal('modalAddCourse'))}
-                glyph="plus"
-              />
+              <Fragment>
+                <IconButton
+                  onClick={() => dispatch(showModal('modalAddCourse'))}
+                  glyph="plus"
+                />
+                <ModalCourseEdit modalId="modalAddCourse" edit={false} />
+              </Fragment>
             )}
           </h1>
           {student.length > 0 && (

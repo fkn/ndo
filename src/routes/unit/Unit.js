@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
@@ -71,16 +71,18 @@ class Unit extends React.Component {
     const { role, unit, course, dispatch, answer } = this.props;
     return (
       <div className={s.root}>
-        <ModalUnitEdit modalId="modalUnitEdit" />
         <div className={s.container}>
           <h1>
             <Link to={`/courses/${course.id}`}>{course.title}</Link>
             {`/${unit.title}`}
             {role === 'teacher' && (
-              <IconButton
-                onClick={() => dispatch(showModal('modalUnitEdit'))}
-                glyph="pencil"
-              />
+              <Fragment>
+                <IconButton
+                  onClick={() => dispatch(showModal('modalUnitEdit'))}
+                  glyph="pencil"
+                />
+                <ModalUnitEdit modalId="modalUnitEdit" />
+              </Fragment>
             )}
             {unit.answerable && <AnswerSelect role={role} />}
           </h1>
