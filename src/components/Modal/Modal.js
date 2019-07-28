@@ -64,13 +64,10 @@ class NewModal extends Component {
   }
 
   render() {
+    const { modals, modalId, children } = this.props;
     return (
-      <Modal
-        bsSize="large"
-        show={this.props.modals[this.props.modalId]}
-        onHide={this.handleClose}
-      >
-        {this.props.children}
+      <Modal bsSize="large" show={modals[modalId]} onHide={this.handleClose}>
+        {children}
         {this.renderDefaultFooter()}
       </Modal>
     );

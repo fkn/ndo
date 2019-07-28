@@ -12,9 +12,9 @@ class ModalWithUsers extends Component {
   };
 
   handleToggle = () => {
-    this.setState({
-      show: !this.state.show,
-    });
+    this.setState(({ show }) => ({
+      show: !show,
+    }));
   };
 
   render() {

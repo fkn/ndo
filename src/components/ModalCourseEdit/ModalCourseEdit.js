@@ -31,7 +31,7 @@ class ModalCourseEdit extends React.Component {
   handleChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { course, edit } = this.props;
+    const { course, edit, modalId, dispatch } = this.props;
     const {
       title = course.title,
       tab = 'course',
@@ -39,10 +39,10 @@ class ModalCourseEdit extends React.Component {
     } = this.state;
     return (
       <Modal
-        modalId={this.props.modalId}
+        modalId={modalId}
         defaultFooter={edit ? 'save_close' : 'add_close'}
         onSubmit={() =>
-          this.props.dispatch(
+          dispatch(
             edit
               ? updateCourse({ title, schema })
               : createCourse({ title, schema }),

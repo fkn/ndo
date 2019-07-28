@@ -74,7 +74,7 @@ class ModalUnitEdit extends React.Component {
   };
 
   render() {
-    const { dispatch, unit = {}, edit } = this.props;
+    const { dispatch, unit = {}, edit, modalId } = this.props;
     const {
       title = unit.title,
       body = unit.body,
@@ -85,7 +85,7 @@ class ModalUnitEdit extends React.Component {
     } = this.state;
     return (
       <Modal
-        modalId={this.props.modalId}
+        modalId={modalId}
         defaultFooter={edit ? 'save_close' : 'add_close'}
         onSubmit={() =>
           dispatch(

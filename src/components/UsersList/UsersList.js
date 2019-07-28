@@ -24,15 +24,12 @@ class UsersList extends React.Component {
   };
 
   render() {
-    const { users = [] } = this.props;
-    const actionsRenderer = Action.actionsRenderer(
-      this.props.children,
-      this.props.actionsTitle,
-    );
+    const { users = [], children, actionsTitle, onClick } = this.props;
+    const actionsRenderer = Action.actionsRenderer(children, actionsTitle);
     return (
       <ListGroup>
         {users.map(user => (
-          <ListGroupItem key={user.id} onClick={() => this.props.onClick(user)}>
+          <ListGroupItem key={user.id} onClick={() => onClick(user)}>
             <User user={user} link={false} />
             {actionsRenderer(user)}
           </ListGroupItem>

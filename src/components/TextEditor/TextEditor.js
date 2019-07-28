@@ -39,9 +39,10 @@ class TextEditor extends React.Component {
 
   render() {
     if (!AceEditor) return null;
+    const { mode, value, onChange } = this.props;
     return (
       <AceEditor
-        mode={this.props.mode}
+        mode={mode}
         theme="chrome"
         tabSize={2}
         name="code"
@@ -50,10 +51,10 @@ class TextEditor extends React.Component {
         ref={ace => {
           this.ace = ace;
         }}
-        value={this.props.value}
+        value={value}
         editorProps={{ $blockScrolling: Infinity }}
         onLoad={this.onLoad}
-        onChange={this.props.onChange}
+        onChange={onChange}
       />
     );
   }

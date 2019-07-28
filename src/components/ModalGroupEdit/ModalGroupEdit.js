@@ -106,12 +106,12 @@ class ModalGroupEdit extends React.Component {
   handleChange = e => this.setState({ [e.target.name]: e.target.value });
 
   render() {
-    const { group, edit, users } = this.props;
+    const { group, edit, users, modalId } = this.props;
     const { title = group.title } = this.state;
     const groupUsers = group.users || [];
     return (
       <Modal
-        modalId={this.props.modalId}
+        modalId={modalId}
         defaultFooter={edit ? 'save_close' : 'add_close'}
         onSubmit={() =>
           edit

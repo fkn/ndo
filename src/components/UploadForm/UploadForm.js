@@ -15,7 +15,7 @@ class UploadForm extends Component {
   };
 
   onDrop = files =>
-    this.setState(state => ({ files: state.files.concat(files) }));
+    this.setState(state => ({ files: [...state.files, files] }));
 
   handleSubmit = e => {
     e.preventDefault();

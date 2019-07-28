@@ -90,13 +90,13 @@ class Codejudge extends Component {
 
   render() {
     const { input, output } = this.state;
-    const { userId, dispatch, problems, modals } = this.props;
+    const { userId, dispatch, problems, modals, title } = this.props;
 
     return (
       <div className={s.root}>
         <div className={s.container}>
           <h1>
-            {this.props.title}
+            {title}
             {userId && (
               <IconButton
                 onClick={() => dispatch(showModal('modalAddProblem'))}
