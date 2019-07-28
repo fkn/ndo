@@ -18,7 +18,6 @@ import CoursesList from '../../components/CoursesList/CoursesList';
 class User extends React.Component {
   static propTypes = {
     dispatch: PropTypes.func.isRequired,
-    title: PropTypes.string.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string.isRequired,
       email: PropTypes.string.isRequired,
@@ -35,6 +34,7 @@ class User extends React.Component {
       ).isRequired,
     }).isRequired,
   };
+
   state = {
     password: '',
     confirmPassword: '',
@@ -49,18 +49,21 @@ class User extends React.Component {
   };
 
   render() {
-    const { title, user, dispatch } = this.props;
+    const {
+      user: { profile, email, courses },
+      dispatch,
+    } = this.props;
     const { password, confirmPassword } = this.state;
     return (
       <div className={s.root}>
         <div className={s.container}>
           <Row>
             <Col xs={12} md={3}>
-              <h1>
-                {title} {user.profile.displayName}
-              </h1>
-              <p>Gender: {user.profile.gender}</p>
-              <p>E-mail: {user.email}</p>
+              <h1>{profile.displayName}</h1>
+              <p>Gender: {profile.gender}</p>
+              <p>
+                E-mail: <a href={`mailto:${email}`}>{email}</a>
+              </p>
               <Button
                 bsStyle="primary"
                 onClick={() => dispatch(showModal('modalPasswordUpdate'))}
@@ -69,17 +72,13 @@ class User extends React.Component {
               </Button>
             </Col>
             <Col xs={12} md={2}>
-              <img
-                className={s.picture}
-                src={user.profile.picture}
-                alt="Profile"
-              />
+              <img className={s.picture} src={profile.picture} alt="Profile" />
             </Col>
           </Row>
           <Row>
             <h2>Courses</h2>
             <Col xs={12} md={4}>
-              <CoursesList courses={user.courses} />
+              <CoursesList courses={courses} />
             </Col>
           </Row>
           <Modal

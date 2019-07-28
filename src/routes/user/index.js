@@ -25,7 +25,7 @@ async function action({ fetch, params, store }) {
     title,
     component: (
       <Layout>
-        <User title={title} id={data.users[0].id} user={data.users[0]} />
+        <User user={data.users[0]} />
       </Layout>
     ),
   };
