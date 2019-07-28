@@ -10,12 +10,9 @@ class UploadForm extends Component {
     onUpload: PropTypes.func.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      files: [],
-    };
-  }
+  state = {
+    files: [],
+  };
 
   onDrop = files =>
     this.setState(state => ({ files: state.files.concat(files) }));

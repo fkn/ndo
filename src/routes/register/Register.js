@@ -28,23 +28,20 @@ class Register extends React.Component {
     title: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: '',
-      password: '',
-      password2: '',
-    };
-  }
+  state = {
+    email: '',
+    password: '',
+    confirmPassword: '',
+  };
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
 
   validatePassword() {
-    const { password, password2 } = this.state;
-    if (!password.length && !password2.length) return null;
-    return password === password2 ? 'success' : 'error';
+    const { password, confirmPassword } = this.state;
+    if (!password.length && !confirmPassword.length) return null;
+    return password === confirmPassword ? 'success' : 'error';
   }
 
   validateEmail() {
@@ -57,7 +54,7 @@ class Register extends React.Component {
 
   render() {
     const { title } = this.props;
-    const { email, password, password2 } = this.state;
+    const { email, password, confirmPassword } = this.state;
     return (
       <div className={s.root}>
         <div className={s.container}>
@@ -92,7 +89,7 @@ class Register extends React.Component {
               <HelpBlock>Make sure it`s at least 6 characters.</HelpBlock>
             </FormGroup>
             <FormGroup
-              controlId="password2"
+              controlId="confirmPassword"
               validationState={this.validatePassword()}
             >
               <ControlLabel>Repeat password</ControlLabel>
@@ -101,8 +98,8 @@ class Register extends React.Component {
                 minLength={6}
                 onChange={this.handleChange}
                 type="password"
-                value={password2}
-                name="password2"
+                value={confirmPassword}
+                name="confirmPassword"
               />
               <HelpBlock>Passwords must match</HelpBlock>
             </FormGroup>

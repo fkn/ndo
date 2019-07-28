@@ -40,14 +40,10 @@ class MarksTable extends Component {
     createMark: PropTypes.func.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      mark: '0',
-      comment: '',
-    };
-  }
+  state = {
+    mark: '0',
+    comment: '',
+  };
 
   getValidationState() {
     const { mark } = this.state;

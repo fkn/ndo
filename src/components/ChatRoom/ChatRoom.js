@@ -10,17 +10,11 @@ import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import ChatTable from '../ChatTable';
 
-class ChatRoomComponent extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      messages: [],
-      message: '',
-    };
-
-    this.socket = io('http://localhost:3003');
-  }
+class ChatRoom extends Component {
+  state = {
+    messages: [],
+    message: '',
+  };
 
   componentDidMount() {
     this.socket.on('chat', message => {
@@ -32,6 +26,8 @@ class ChatRoomComponent extends Component {
   componentWillUnmount() {
     this.socket.close();
   }
+
+  socket = io('http://localhost:3003');
 
   handleMessageChange = event => {
     this.setState({
@@ -79,8 +75,8 @@ class ChatRoomComponent extends Component {
   }
 }
 
-ChatRoomComponent.propTypes = {
+ChatRoom.propTypes = {
   name: PropTypes.string.isRequired,
 };
 
-export default ChatRoomComponent;
+export default ChatRoom;

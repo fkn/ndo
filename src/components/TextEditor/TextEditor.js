@@ -30,17 +30,12 @@ class TextEditor extends React.Component {
     onLoad: () => {},
   };
 
-  constructor() {
-    super();
-    this.onLoad = this.onLoad.bind(this);
-  }
-
-  onLoad(editor) {
+  onLoad = editor => {
     this.editor = editor;
     editor.focus();
     editor.getSession().setUseWrapMode(true);
     if (this.props.onLoad) this.props.onLoad(editor);
-  }
+  };
 
   render() {
     if (!AceEditor) return null;

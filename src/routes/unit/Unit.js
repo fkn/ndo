@@ -51,11 +51,6 @@ class Unit extends React.Component {
     }),
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
-
   componentDidMount() {
     const { role, user } = this.props;
     if (role !== 'teacher' && !user.isAdmin)
