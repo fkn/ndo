@@ -10,25 +10,20 @@ import Header from '../Header';
 import Sidebar from '../Sidebar';
 import Footer from '../Footer';
 
-class Layout extends React.Component {
-  render() {
-    const { children } = this.props;
-    return (
-      <Fragment>
-        <Header />
-        <Grid fluid>
-          <Row>
-            <Sidebar />
-            <Col sm={9} smOffset={3} md={10} mdOffset={2} className={s.main}>
-              {children}
-              <Footer />
-            </Col>
-          </Row>
-        </Grid>
-      </Fragment>
-    );
-  }
-}
+const Layout = ({ children }) => (
+  <Fragment>
+    <Header />
+    <Grid fluid>
+      <Row>
+        <Sidebar />
+        <Col sm={9} smOffset={3} md={10} mdOffset={2} className={s.main}>
+          {children}
+          <Footer />
+        </Col>
+      </Row>
+    </Grid>
+  </Fragment>
+);
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,

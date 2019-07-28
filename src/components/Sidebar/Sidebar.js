@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { connect } from 'react-redux';
@@ -8,60 +8,54 @@ import Link from '../Link';
 import history from '../../history';
 
 const menuSecondOrder = ['unit', 'course'];
-class Sidebar extends Component {
-  static propTypes = {
-    secondMenu: PropTypes.shape({
-      unit: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          link: PropTypes.string.isRequired,
-          title: PropTypes.string.isRequired,
-        }),
-      ),
-      course: PropTypes.arrayOf(
-        PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          link: PropTypes.string.isRequired,
-          title: PropTypes.string.isRequired,
-        }),
-      ),
-    }).isRequired,
-  };
+const Sidebar = ({ secondMenu = [] }) => (
+  <Col sm={3} md={2} className={s.sidebar}>
+    {secondMenu &&
+      menuSecondOrder.map(key => (
+        <Fragment key={key}>
+          <Nav bsStyle="pills" stacked key={key}>
+            {secondMenu[key] &&
+              secondMenu[key].map(item => (
+                <NavItem
+                  componentClass={Link}
+                  href={item.link}
+                  to={item.link}
+                  key={item.id}
+                  active={
+                    history.location && history.location.pathname === item.link
+                  }
+                >
+                  {item.title}
+                </NavItem>
+              ))}
+          </Nav>
+          {(secondMenu[key] && secondMenu[key].length && <hr />) || null}
+        </Fragment>
+      ))}
+  </Col>
+);
 
-  render() {
-    const { secondMenu } = this.props;
-    return (
-      <Col sm={3} md={2} className={s.sidebar}>
-        {secondMenu &&
-          menuSecondOrder.map(key => (
-            <Fragment key={key}>
-              <Nav bsStyle="pills" stacked key={key}>
-                {secondMenu[key] &&
-                  secondMenu[key].map(item => (
-                    <NavItem
-                      componentClass={Link}
-                      href={item.link}
-                      to={item.link}
-                      key={item.id}
-                      active={
-                        history.location &&
-                        history.location.pathname === item.link
-                      }
-                    >
-                      {item.title}
-                    </NavItem>
-                  ))}
-              </Nav>
-              {(secondMenu[key] && secondMenu[key].length && <hr />) || null}
-            </Fragment>
-          ))}
-      </Col>
-    );
-  }
-}
+Sidebar.propTypes = {
+  secondMenu: PropTypes.shape({
+    unit: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        link: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+      }),
+    ),
+    course: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string.isRequired,
+        link: PropTypes.string.isRequired,
+        title: PropTypes.string.isRequired,
+      }),
+    ),
+  }).isRequired,
+};
 
 const mapStateToProps = state => ({
-  secondMenu: state.secondMenu || [],
+  secondMenu: state.secondMenu,
 });
 
 export default connect(mapStateToProps)(withStyles(s)(Sidebar));

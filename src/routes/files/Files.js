@@ -21,7 +21,11 @@ class Files extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <h1>{title}</h1>
-          <FilesList files={files} />
+          {files.length > 0 ? (
+            <FilesList files={files} />
+          ) : (
+            <p>You have no files yet</p>
+          )}
         </div>
       </div>
     );
