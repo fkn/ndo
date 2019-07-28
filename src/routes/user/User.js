@@ -1,12 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Modal, Button, FormControl, Row, Col } from 'react-bootstrap';
+import {
+  Button,
+  FormControl,
+  Row,
+  Col,
+  FormGroup,
+  ControlLabel,
+} from 'react-bootstrap';
+import { showModal } from '../../actions/modals';
 import s from './User.css';
-import Link from '../../components/Link';
+import Modal from '../../components/Modal';
+import CoursesList from '../../components/CoursesList/CoursesList';
 
 class User extends React.Component {
   static propTypes = {
+    dispatch: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
     user: PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -24,63 +35,43 @@ class User extends React.Component {
       ).isRequired,
     }).isRequired,
   };
+  state = {
+    password: '',
+    confirmPassword: '',
+  };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      newPass: '',
-      showModal: false,
-    };
-    this.handleChange = this.handleChange.bind(this);
-    this.handleChange2 = this.handleChange2.bind(this);
-    this.open = this.open.bind(this);
-    this.close = this.close.bind(this);
-  }
+  handleInputChange = event => {
+    this.setState({ [event.target.name]: event.target.value });
+  };
 
-  handleChange(event) {
-    this.setState({ newPass: event.target.value });
-  }
-
-  handleChange2(event) {
-    this.setState({ newPass2: event.target.value });
-  }
-
-  close() {
-    this.setState({ showModal: false });
-  }
-
-  open() {
-    this.setState({ showModal: true });
-  }
+  handleSubmit = () => {
+    // TODO: implement password update logic
+  };
 
   render() {
-    const coursesList = [];
-    const { courses } = this.props.user;
-    for (let i = 0; i < courses.length; i += 1) {
-      coursesList.push(
-        <li key={courses[i].id}>
-          <Link to={`/courses/${courses[i].id}`}>{courses[i].title}</Link>
-        </li>,
-      );
-    }
+    const { title, user, dispatch } = this.props;
+    const { password, confirmPassword } = this.state;
     return (
       <div className={s.root}>
         <div className={s.container}>
           <Row>
             <Col xs={12} md={3}>
               <h1>
-                {this.props.title} {this.props.user.profile.displayName}
+                {title} {user.profile.displayName}
               </h1>
-              <div>Gender: {this.props.user.profile.gender}</div>
-              <div>E-mail: {this.props.user.email}</div>
-              <Button bsStyle="primary" onClick={this.open}>
+              <p>Gender: {user.profile.gender}</p>
+              <p>E-mail: {user.email}</p>
+              <Button
+                bsStyle="primary"
+                onClick={() => dispatch(showModal('modalPasswordUpdate'))}
+              >
                 Change password
               </Button>
             </Col>
             <Col xs={12} md={2}>
               <img
                 className={s.picture}
-                src={this.props.user.profile.picture}
+                src={user.profile.picture}
                 alt="Profile"
               />
             </Col>
@@ -88,40 +79,40 @@ class User extends React.Component {
           <Row>
             <h2>Courses</h2>
             <Col xs={12} md={4}>
-              {coursesList}
+              <CoursesList courses={user.courses} />
             </Col>
           </Row>
-          <Modal show={this.state.showModal} onHide={this.close}>
-            <Modal.Header closeButton>
-              <Modal.Title>Change password</Modal.Title>
-            </Modal.Header>
+          <Modal
+            defaultFooter="save_close"
+            onSubmit={this.handleSubmit}
+            modalId="modalPasswordUpdate"
+          >
             <Modal.Body>
-              <span>New password: </span>
-              <FormControl
-                type="password"
-                value={this.state.newPass}
-                onChange={this.handleChange}
-              />
-              <span>Password again: </span>
-              <FormControl
-                type="password"
-                value={this.state.newPass2}
-                onChange={this.handleChange2}
-                disabled={this.state.newPass.length < 6}
-              />
-              <div>
-                <br />
-              </div>
+              <FormGroup>
+                <ControlLabel>New password</ControlLabel>
+                <FormControl
+                  type="password"
+                  name="password"
+                  required
+                  autoComplete="off"
+                  minLength={6}
+                  value={password}
+                  onChange={this.handleInputChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <ControlLabel>Confirm password</ControlLabel>
+                <FormControl
+                  type="password"
+                  name="confirmPassword"
+                  autoComplete="off"
+                  required
+                  minLength={6}
+                  value={confirmPassword}
+                  onChange={this.handleInputChange}
+                />
+              </FormGroup>
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                onClick={this.close}
-                disabled={this.state.newPass !== this.state.newPass2}
-              >
-                Change
-              </Button>
-              <Button onClick={this.close}>Close</Button>
-            </Modal.Footer>
           </Modal>
         </div>
       </div>
@@ -129,4 +120,4 @@ class User extends React.Component {
   }
 }
 
-export default withStyles(s)(User);
+export default connect()(withStyles(s)(User));
