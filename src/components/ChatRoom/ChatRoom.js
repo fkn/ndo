@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   FormGroup,
   ControlLabel,
@@ -10,26 +10,22 @@ import PropTypes from 'prop-types';
 import io from 'socket.io-client';
 import ChatTable from '../ChatTable';
 
-class ChatRoomComponent extends React.Component {
+class ChatRoomComponent extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       messages: [],
-      newMessage: '',
+      message: '',
     };
 
     this.socket = io('http://localhost:3003');
-    this.setNewMessage = this.setNewMessage.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
     this.socket.on('chat', message => {
       message.key = JSON.stringify(message);
-      const messages = this.state.messages || [];
-      if (message.message !== '') messages.push(message);
-      this.setState({ messages });
+      this.setState(({ messages }) => ({ messages: [...messages, message] }));
     });
   }
 
@@ -37,27 +33,30 @@ class ChatRoomComponent extends React.Component {
     this.socket.close();
   }
 
-  setNewMessage(event) {
+  handleMessageChange = event => {
     this.setState({
-      newMessage: event.target.value,
+      message: event.target.value,
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     event.preventDefault();
+    const { name } = this.props;
+    const { message } = this.state;
     this.socket.emit('chat', {
-      name: this.props.name,
-      message: this.state.newMessage,
+      name,
+      message,
       timestamp: new Date().toISOString(),
     });
     this.setState({
-      newMessage: '',
+      message: '',
     });
-  }
+  };
 
   render() {
+    const { message, messages } = this.state;
     return (
-      <div>
+      <Fragment>
         <Form inline onSubmit={this.handleSubmit}>
           <FormGroup>
             <ControlLabel>Message</ControlLabel>{' '}
@@ -66,16 +65,16 @@ class ChatRoomComponent extends React.Component {
               type="text"
               label="Message"
               placeholder="Enter your message"
-              onChange={this.setNewMessage}
-              value={this.state.newMessage}
+              onChange={this.handleMessageChange}
+              value={message}
               autoComplete="off"
             />
           </FormGroup>
           <Button type="submit">Send</Button>
         </Form>
 
-        <ChatTable messages={this.state.messages} />
-      </div>
+        <ChatTable messages={messages} />
+      </Fragment>
     );
   }
 }
