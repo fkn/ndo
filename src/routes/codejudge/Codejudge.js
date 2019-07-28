@@ -166,7 +166,7 @@ class Codejudge extends Component {
           <ListGroup>
             {problems.map(problem => (
               <ListGroupItem
-                action
+                action="true"
                 onClick={() => dispatch(showModal('problemModal', problem))}
                 key={problem.id}
               >
