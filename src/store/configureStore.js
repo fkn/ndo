@@ -14,11 +14,12 @@ export default function configureStore(initialState, helpersConfig) {
     middleware.push(createLogger());
 
     // https://github.com/zalmoxisus/redux-devtools-extension#redux-devtools-extension
+    /* eslint-disable no-underscore-dangle */
     let devToolsExtension = f => f;
-    if (process.env.BROWSER && window.devToolsExtension) {
-      devToolsExtension = window.devToolsExtension();
+    if (process.env.BROWSER && window.__REDUX_DEVTOOLS_EXTENSION__) {
+      devToolsExtension = window.__REDUX_DEVTOOLS_EXTENSION__();
     }
-
+    /* eslint-enable */
     enhancer = compose(
       applyMiddleware(...middleware),
       devToolsExtension,

@@ -16,7 +16,11 @@ const Home = ({ user }) => (
 Home.propTypes = {
   user: PropTypes.shape({
     email: PropTypes.string.isRequired,
-  }).isRequired,
+  }),
+};
+
+Home.defaultProps = {
+  user: null,
 };
 
 export default withStyles(s)(Home);
