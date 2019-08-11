@@ -91,6 +91,8 @@ module.exports = {
     'no-param-reassign': 'off',
     'no-return-assign': 'off',
     'no-bitwise': 'off',
+    'react/forbid-prop-types': 'off',
+    'react/destructuring-assignment': 'off',
   },
 
   settings: {
