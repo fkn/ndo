@@ -1,5 +1,5 @@
 import passport from 'passport';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { User, UserLogin, UserClaim, UserProfile } from './data/models';
@@ -33,9 +33,7 @@ passport.use(
             profile: {
               displayName: profile.displayName,
               gender: profile._json.gender,
-              picture: `https://graph.facebook.com/${
-                profile.id
-              }/picture?type=large`,
+              picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
             },
           },
           {

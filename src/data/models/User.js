@@ -8,7 +8,7 @@
  */
 
 import DataType from 'sequelize';
-import bcrypt from 'bcrypt-nodejs';
+import bcrypt from 'bcryptjs';
 import _ from 'lodash';
 import Model from '../sequelize';
 import UserLogin from './UserLogin';
